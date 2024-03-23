@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Left Section Example</title>
+
+    <!-- Підключення Bootstrap css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Підключення стилів з файлу style.css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Темно-золотиста частина зверху -->
+            <div class="col-md-12 top-section">
+                <h3>Заголовок</h3>
+                <!-- Додатковий контент можна додати тут -->
+            </div>
+        </div>
+        <div class="row">
+            <!-- Ліва частина зверху до низу -->
+            <div class="col-md-2 left-section">
+                <h3>Меню</h3>
+                <ul>
+                    <li><a href="#">Пункт меню 1</a></li>
+                    <li><a href="#">Пункт меню 2</a></li>
+                    <li><a href="#">Пункт меню 3</a></li>
+                </ul>
+                <!-- Додатковий контент можна додати тут -->
+                <h3><a> Щось </a></h3>
+                <ul>
+                    <li><a> якийсь контент </a></li>
+                    <li><a> якийсь контент </a></li>
+                </ul>
+
+            </div>
+            <!-- Остання частина сторінки з темним контентом -->
+            <div class="col-md-10 dark-content">
+                <!-- Основний вміст сторінки буде розміщений тут -->
+                <h3> основний контент </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Підключення Bootstrap JS та jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

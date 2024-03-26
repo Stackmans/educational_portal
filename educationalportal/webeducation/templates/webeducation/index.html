@@ -1,8 +1,25 @@
 {% extends 'base.html' %}
 
 {% block title %}Домашня сторінка{% endblock %}
+{% block header %}
+Дарова
+{% endblock %}
 
-{% block content %}
-<h1>Ласкаво просимо на наш сайт!</h1>
-<p>Тут може бути ваш вміст головної сторінки.</p>
+{% block left_side_content %}
+                <h3>Меню</h3>
+                <ul>
+                    <li><a href="#">Пункт меню 1</a></li>
+                    <li><a href="#">Пункт меню 2</a></li>
+                    <li><a href="#">Пункт меню 3</a></li>
+                </ul>
+                <!-- Додатковий контент можна додати тут -->
+                <h3><a> Щось </a></h3>
+                <ul>
+                    <li><a> якийсь контент </a></li>
+                    <li><a> якийсь контент </a></li>
+                </ul>
+{% endblock %}
+
+{% block main_content %}
+Основний контентик
 {% endblock %}

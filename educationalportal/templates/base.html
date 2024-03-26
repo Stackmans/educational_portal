@@ -18,31 +18,21 @@
         <div class="row">
             <!-- Темно-золотиста частина зверху -->
             <div class="col-md-12 top-section">
-                <h3>Заголовок</h3>
+                <h3>{% block header %} {% endblock %}</h3>
                 <!-- Додатковий контент можна додати тут -->
             </div>
         </div>
         <div class="row">
             <!-- Ліва частина зверху до низу -->
             <div class="col-md-2 left-section">
-                <h3>Меню</h3>
-                <ul>
-                    <li><a href="#">Пункт меню 1</a></li>
-                    <li><a href="#">Пункт меню 2</a></li>
-                    <li><a href="#">Пункт меню 3</a></li>
-                </ul>
-                <!-- Додатковий контент можна додати тут -->
-                <h3><a> Щось </a></h3>
-                <ul>
-                    <li><a> якийсь контент </a></li>
-                    <li><a> якийсь контент </a></li>
-                </ul>
+                {% block left_side_content %}
 
+                {% endblock %}
             </div>
-            <!-- Остання частина сторінки з темним контентом -->
+
             <div class="col-md-10 dark-content">
                 <!-- Основний вміст сторінки буде розміщений тут -->
-                <h3> основний контент </h3>
+                <h3>{% block main_content %} {% endblock %}</h3>
             </div>
         </div>
     </div>

@@ -12,11 +12,11 @@ info = {
 
 class RegisterView(View):
 
-    def get(self, request):
+    def get(self, request, role=None):
         form = UserCreationForm()
-        return render(request, 'webeducation/register.html', {'form': form})
+        return render(request, 'webeducation/register.html', {'form': form, 'role': role})
 
-    def post(self, request):
+    def post(self, request, role=None):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -25,7 +25,7 @@ class RegisterView(View):
                 login(request, user)
 
             return HttpResponseRedirect(reverse('home'))
-        return render(request, 'webeducation/register.html', {'form': form})
+        return render(request, 'webeducation/register.html', {'form': form, 'role': role})
 
 
 class LoginView(View):
@@ -50,3 +50,7 @@ class LoginView(View):
 
 def index(request):
     return render(request, 'webeducation/index.html', info)
+
+
+def registration_method(request):
+    return render(request, 'webeducation/registration_method.html', info)

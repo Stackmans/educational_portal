@@ -3,12 +3,22 @@
 
 {% block header %}
 <div class="d-flex justify-content-between align-items-center">
-    Hello
+
+{% if user.is_authenticated %}
+    Today is a good day to learn something!
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Log out</button>
+    </form>
+{% else %}
+    Welcome to Educational portal!
     <div>
         <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
         <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
     </div>
+
 </div>
+{% endif %}
 {% endblock %}
 
 

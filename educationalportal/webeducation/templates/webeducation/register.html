@@ -6,6 +6,12 @@
 </div>
 {% endblock %}
 
+{% block left_side_content %}
+<p>Welcome to Educationalportal</p>
+<p>if you have account: </p>
+<a href="{% url 'login' %}" class="btn btn-outline-primary">Log in</a>
+{% endblock %}
+
 {% block main_content %}
 <div class="container">
     <div class="row justify-content-center">

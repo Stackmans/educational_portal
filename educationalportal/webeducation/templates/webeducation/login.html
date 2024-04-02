@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block header %}
 <div class="text-center">
     Sign in Educationalportal
@@ -9,7 +9,7 @@
 {% block left_side_content %}
 <p>Welcome to Educationalportal</p>
 <p>if you don't have account: </p>
-<a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+<a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">Register</a>
 {% endblock %}
 
 {% block main_content %}

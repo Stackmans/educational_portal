@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block main_content %}
+<h1>Add Subject</h1>
+<form method="POST" action="{% url 'add_subject_to_user' %}">
+    {% csrf_token %}
+    <label for="subject">Choose a subject:</label>
+    <select name="subject" id="subject">
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Add Subject</button>
+</form>
+{% endblock %}

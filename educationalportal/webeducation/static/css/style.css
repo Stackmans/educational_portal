@@ -20,3 +20,9 @@
     padding: 20px;
     min-height: 100vh;
 }
+
+
+.btn-lg {
+    padding: 40px 80px; /* розмір самої кнопки
+    font-size: 40px; /* розмір шрифту
+}

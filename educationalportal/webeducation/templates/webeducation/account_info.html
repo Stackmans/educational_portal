@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+
+{% if user.is_authenticated %}
+    Today is a good day to learn something!
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Log out</button>
+        <a href="{% url 'check_account' %}" class="btn btn-outline-primary">Account</a>
+    </form>
+
+{% else %}
+    Welcome to Educational portal!
+    <div>
+        <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+        <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}
+
+
+{% block left_side_content %}
+    <h3>Subjects</h3>
+    <ul>
+        {% if user.is_authenticated %}
+            {% if user.role == 'teacher' %}
+                {% for subject in user.teacher.subjects.all %}
+                    <li><a href="#">{{ subject.name }}</a></li>
+                {% endfor %}
+            {% elif user.role == 'student' %}
+                {% for subject in user.student.subjects.all %}
+                    <li><a href="#">{{ subject.name }}</a></li>
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            <p>Please log in to view subjects.</p>
+        {% endif %}
+    </ul>
+
+{% endblock %}
+
+{% block main_content %}
+
+<h1>User profile</h1>
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+
+{% if messages %}
+    {% for message in messages %}
+        <p class="alert alert-{{ message.level }}">{{ message.message }}</p>
+    {% endfor %}
+{% endif %}
+
+<form method="post" action="{% url 'add_subject_to_user' %}">
+    {% csrf_token %}
+
+    <select name="subject_id">
+        <option value="">-- Choose subject --</option>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Add Subject</button>
+</form>
+
+{% endblock %}
+
+
+

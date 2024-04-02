@@ -1,16 +1,70 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from .forms import RegisterUserForm
-from .models import CustomUser, Teacher, Student
+from .forms import RegisterUserForm, SubjectDisplayForm
+from .models import CustomUser, Teacher, Student, Subject
+from .utils import add_subject
 
 info = {
     'title': 'Enlighten me'
 }
 
+
+def check_account(request):
+    subjects = Subject.objects.all()
+    context = {'subjects': subjects}
+    return render(request, 'webeducation/account_info.html', context)
+
+
+def index(request):
+    form = SubjectDisplayForm()
+    content = {
+        'form': form,
+        'info': info
+    }
+    return render(request, 'webeducation/index.html', content)
+
+def get_subjects(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if user.role == 'teacher':
+            subjects = user.teacher.subjects.all()
+        elif user.role == 'student':
+            subjects = user.student.subjects.all()
+
+        return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
+    else:
+        return render(request, 'webeducation/login.html')
+
+
+@login_required
+def add_subject_to_user(request):
+    subjects = Subject.objects.all()
+    if request.method == 'POST':
+        subject_ids = request.POST.getlist('subject_id')
+        for subject_id in subject_ids:
+            subject = get_object_or_404(Subject, id=subject_id)
+            add_subject(subject, request.user.username)
+        return redirect('check_account')
+    else:
+        return render(request, 'webeducation/check_account.html', {'subjects': subjects})
+
+
+# def delete_subject_from_user(request):
+#     user = request.user
+#     if user.role == 'teacher':
+#         subjects = Teacher.subjects.all()
+#         Teacher.subjects
+#         for subject in subjects
+#     if user.role == 'student':
+#         pass
+
+
+# ---------------------- User methods ----------------------
 
 class RegisterView(View):
     def get(self, request):
@@ -65,5 +119,25 @@ class LoginView(View):
         return render(request, 'webeducation/login.html', {'form': form})
 
 
-def index(request):
-    return render(request, 'webeducation/index.html', info)
+# delete from 2 tables
+def delete_user(user_id):
+    try:
+        user = CustomUser.objects.get(pk=user_id)
+        user.delete()
+
+        try:
+            teacher = Teacher.objects.get(user_id=user_id)
+            teacher.delete()
+        except Teacher.DoesNotExist:
+            pass
+
+        try:
+            student = Student.objects.get(user_id=user_id)
+            student.delete()
+        except Student.DoesNotExist:
+            pass
+
+        return True
+
+    except CustomUser.DoesNotExist:
+        return False

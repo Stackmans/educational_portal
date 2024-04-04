@@ -3,9 +3,10 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.decorators import method_decorator
 from django.views import View
 
-from .forms import RegisterUserForm, SubjectDisplayForm
+from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm
 from .models import CustomUser, Teacher, Student, Subject
 from .utils import add_subject
 
@@ -27,6 +28,7 @@ def index(request):
         'info': info
     }
     return render(request, 'webeducation/index.html', content)
+
 
 def get_subjects(request):
     if request.user.is_authenticated:
@@ -55,13 +57,44 @@ def add_subject_to_user(request):
 
 
 # def delete_subject_from_user(request):
+#     roles = {
+#         'teacher': Teacher,
+#         'student': Student
+#     }
 #     user = request.user
 #     if user.role == 'teacher':
 #         subjects = Teacher.subjects.all()
-#         Teacher.subjects
-#         for subject in subjects
-#     if user.role == 'student':
-#         pass
+#
+#     elif user.role == 'student':
+#         subjects = Student.subjects.all()
+#         for subject in subjects:
+#             if subject ==
+
+
+class DeleteSubjectView(View):
+    def get(self, request):
+        return redirect('check_account')
+
+    def post(self, request):
+        user = request.user
+        subject_id = request.POST.get('subject_id')  # !!!!!!в шаблоні передати предмети
+        subject = get_object_or_404(Subject, id=subject_id)
+
+        if user.role == 'teacher':
+            user.teacher.subjects.remove(subject)
+        elif user.role == 'student':
+            user.student.subjects.remove(subject)
+
+        return redirect('check_account')  # Перенаправлення на сторінку з інформацією про обліковий запис
+
+
+class SubjectTasks(View):
+
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
 
 
 # ---------------------- User methods ----------------------
@@ -119,25 +152,45 @@ class LoginView(View):
         return render(request, 'webeducation/login.html', {'form': form})
 
 
-# delete from 2 tables
-def delete_user(user_id):
-    try:
-        user = CustomUser.objects.get(pk=user_id)
-        user.delete()
+# @login_required
+# def delete_account(request):
+#     if request.method == 'POST':
+#         form = DeleteAccountForm(request.POST)
+#         if form.is_valid() and form.cleaned_data['confirm_delete']:
+#             request.user.delete()
+#             return redirect('home')  # Перенаправлення на домашню сторінку після видалення
+#     else:
+#         form = DeleteAccountForm()
+#
+#     return render(request, 'webeducation/account_info.html', {'form': form})
 
-        try:
-            teacher = Teacher.objects.get(user_id=user_id)
-            teacher.delete()
-        except Teacher.DoesNotExist:
-            pass
 
-        try:
-            student = Student.objects.get(user_id=user_id)
-            student.delete()
-        except Student.DoesNotExist:
-            pass
+@method_decorator(login_required, name='dispatch')
+class DeleteAccount(View):
+    def get(self, request):
+        form = DeleteAccountForm()
+        return render(request, 'webeducation/account_info.html', {'form': form})
 
-        return True
+    def post(self, request):
+        form = DeleteAccountForm(request.POST)
+        if form.is_valid() and form.cleaned_data['confirm_delete']:
+            request.user.delete()
+            return redirect('home')
+        else:
+            return render(request, 'webeducation/account_info.html', {'form': form})
 
-    except CustomUser.DoesNotExist:
-        return False
+
+#  why this func is not working
+# @login_required
+# class DeleteAccount(View):
+#     def get(self, request):
+#         form = DeleteAccountForm()
+#         return render(request, 'webeducation/account_info.html', {'form': form})
+#
+#     def post(self, request):
+#         form = DeleteAccountForm(request.POST)
+#         if form.is_valid() and form.cleaned_data['confirm_delete']:
+#             request.user.delete()
+#             return redirect('home')
+#         else:
+#             return render(request, 'webeducation/account_info.html', {'form': form})

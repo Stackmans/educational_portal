@@ -3,7 +3,10 @@ from django.db import models
 
 
 class Course(models.Model):
-    number = models.IntegerField()
+    course_number = models.IntegerField()
+
+    def __str__(self):
+        return f'You on {self.course_number} course'
 
 
 class Subject(models.Model):
@@ -20,7 +23,6 @@ class Task(models.Model):
 
 
 class CustomUser(AbstractUser):
-    # Додати поле "role"
     role = models.CharField(max_length=7)
     photo = models.ImageField(upload_to='user_photos/', null=True, blank=True)
 
@@ -33,14 +35,14 @@ class UploadsModel(models.Model):
 
 
 class Teacher(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='teacher')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='teacher', null=True, blank=True)
     subjects = models.ManyToManyField(Subject)
 
 
 class Student(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student', null=True, blank=True)
     subjects = models.ManyToManyField(Subject)
-
+    course_number = models.ManyToManyField(Course)
 
 # class Comment(models.Model):
 #     post = models.

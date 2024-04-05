@@ -30,7 +30,7 @@
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="#">{{ subject.name }}</a>
+                            <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
                     </li>
@@ -42,7 +42,7 @@
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="#">{{ subject.name }}</a>
+                            <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
                     </li>

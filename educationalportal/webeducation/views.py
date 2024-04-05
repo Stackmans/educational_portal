@@ -97,6 +97,20 @@ class SubjectTasks(View):
         pass
 
 
+# class SubjectInfo(View):
+#     def get(self, request):
+#         pass
+#
+#     def post(self, request):
+#         pass
+
+
+def subject_info(request, subject_name):
+    subject = get_object_or_404(Subject, name=subject_name)
+
+    return render(request, 'webeducation/subject_info.html', {'subject': subject})
+
+
 # ---------------------- User methods ----------------------
 
 class RegisterView(View):

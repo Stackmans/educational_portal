@@ -11,6 +11,8 @@ urlpatterns = [
     path('account/', views.check_account, name='check_account'),
     path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
 
+    path('subject_info/<slug:subject_name>', views.subject_info, name='subject_info'),
+
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
 
     path('delete', views.DeleteAccount.as_view(), name='delete_account'),

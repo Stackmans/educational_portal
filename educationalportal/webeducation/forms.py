@@ -3,6 +3,12 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Subject, Course
 
 
+class PhotoUploadForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['photo']
+
+
 class CourseForm(Course):
 
     courses = Course.objects.all()

@@ -34,7 +34,7 @@
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
+                            <a href="{% url 'subject_info' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
                     </li>
@@ -46,7 +46,7 @@
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
+                            <a href="{% url 'subject_info' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
                     </li>
@@ -67,6 +67,15 @@
 
 {% endblock %}
 
+
+
+
 {% block main_content %}
-Main content
+Main content about {{ subject }}
+<h1>Teachers</h1>
+    <ul>
+        {% for teacher in subject.teacher_set.all %}
+            <li>{{ teacher.user.first_name }} {{ teacher.user.last_name }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

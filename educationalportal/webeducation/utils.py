@@ -8,9 +8,13 @@ def add_subject(subject_name, user_name):
 
     if user.role == 'teacher':
         teacher = user.teacher
+
         teacher.subjects.add(subject)
+
     elif user.role == 'student':
         student = user.student
+
         student.subjects.add(subject)
+
     else:
         raise ValueError('Invalid user role')

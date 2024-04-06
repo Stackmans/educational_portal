@@ -65,21 +65,25 @@
 {% block main_content %}
     <h1>User profile</h1>
 
-    <div style="width: 200px; height: 200px; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;">
-        {% if user.photo %}
-            <img src="{{ user.photo.url }}" alt="User Photo" style="width: 100%; height: 100%; object-fit: cover;">
-        {% else %}
-            <form method="post" enctype="multipart/form-data" action="{% url 'upload_photo' %}">
-                {% csrf_token %}
-                <input type="file" name="photo" accept="image/*">
-                <button type="submit">Upload Photo</button>
-            </form>
-        {% endif %}
+    <div style="display: flex; margin-bottom: 20px;">
+        <div style="width: 200px; height: 200px; border: 1px solid #ccc; border-radius: 10px; overflow: hidden; margin-right: 20px;">
+            {% if user.photo %}
+                <img src="{{ user.photo.url }}" alt="User Photo" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_photo' %}">
+                    {% csrf_token %}
+                    <input type="file" name="photo" accept="image/*">
+                    <button type="submit">Upload Photo</button>
+                </form>
+            {% endif %}
+        </div>
+        <div>
+            <p>Username: {{ user.username }}</p>
+            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+            <p>Role: {{ user.role }}</p>
+            <p>Email: {{ user.email }}</p>
+        </div>
     </div>
-
-    <p>Username: {{ user.username }}</p>
-    <p>Role: {{ user.role }}</p>
-    <p>Email: {{ user.email }}</p>
 
     {% if messages %}
         {% for message in messages %}

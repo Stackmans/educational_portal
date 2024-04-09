@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm
-from .models import CustomUser, Teacher, Student, Subject
+from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm
+from .models import CustomUser, Teacher, Student, Subject, Course
 from .utils import add_subject
 
 info = {
@@ -28,9 +28,11 @@ class UploadPhotoView(View):
         return render(request, 'webeducation/upload_photo.html', {'form': form})
 
 
+# ------------------------------СЮДИ ДОДАВАТИ КОНТЕКСТ----------------------------------------
 def check_account(request):
+    courses = Course.objects.all()
     subjects = Subject.objects.all()
-    context = {'subjects': subjects}
+    context = {'subjects': subjects, 'courses': courses}
     return render(request, 'webeducation/account_info.html', context)
 
 
@@ -107,6 +109,24 @@ def subject_info(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
 
     return render(request, 'webeducation/subject_info.html', {'subject': subject})
+
+
+def requests_info(request):
+
+    return render(request, 'webeducation/requests_to_teacher.html')
+
+
+class SelectCourseView(View):
+    def get(self, request):
+        courses = Course.objects.all()
+        return render(request, 'webeducation/select_course.html', {'courses': courses})
+
+    def post(self, request):
+        course_id = request.POST.get('course_id')
+        student = request.user.student  # Assuming user is logged in and a student
+        student.course_id = course_id
+        student.save()
+        return redirect('check_account')
 
 
 # ---------------------- User methods ----------------------

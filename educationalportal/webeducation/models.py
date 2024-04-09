@@ -1,12 +1,6 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
-
-class Course(models.Model):
-    course_number = models.IntegerField()
-
-    def __str__(self):
-        return f'You on {self.course_number} course'
 
 
 class Subject(models.Model):
@@ -39,13 +33,17 @@ class Teacher(models.Model):
     subjects = models.ManyToManyField(Subject)
 
 
+class Course(models.Model):
+    course_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)])
+
+    def __str__(self):
+        return str(self.course_number)
+
+
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student', null=True, blank=True)
     subjects = models.ManyToManyField(Subject)
-    course_number = models.ManyToManyField(Course)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
 
-# class Comment(models.Model):
-#     post = models.
-#     author = models.
-#     text = models.
-#     created_at = models.
+    def __str__(self):
+        return self.user.username

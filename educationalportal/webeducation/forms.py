@@ -9,17 +9,6 @@ class PhotoUploadForm(forms.ModelForm):
         fields = ['photo']
 
 
-class CourseForm(Course):
-
-    courses = Course.objects.all()
-
-    # Створити список кортежів для варіантів вибору
-    course_choices = [(course.id, str(course)) for course in courses]
-
-    # Використовуйте course_choices як choices для поля вибору
-    course = forms.ChoiceField(choices=course_choices)
-
-
 class RegisterUserForm(UserCreationForm):
     role = forms.ChoiceField(choices=[('student', 'Student'), ('teacher', 'Teacher')])
 
@@ -37,3 +26,11 @@ class SubjectDisplayForm(forms.Form):
         queryset=Subject.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False)
+
+
+class StudentCourseForm(forms.Form):
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.all(),
+        empty_label=None,  # Прибрати пустий варіант
+        label='Choose a course',
+    )

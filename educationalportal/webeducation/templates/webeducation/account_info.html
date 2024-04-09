@@ -26,45 +26,48 @@
 
 {% block left_side_content %}
     <h3>Subjects</h3>
-    <ul>
+
         {% if user.is_authenticated %}
+
 
             {% if user.role == 'teacher' %}
                 {% for subject in user.teacher.subjects.all %}
-                    <li>
+
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
                             <a href="{% url 'subject_info' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
-                    </li>
+
                 {% endfor %}
+
+                <h3><a> Another </a></h3>
+                    <a href="{% url 'requests' %}">Requests</a>
+
 
             {% elif user.role == 'student' %}
                 {% for subject in user.student.subjects.all %}
-                    <li>
+
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
                             <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
-                    </li>
+
                 {% endfor %}
+
+                <h3><a> Another </a></h3>
+                    <a>Content</a>
 
             {% endif %}
 
-    </ul>
-        <h3><a> Another </a></h3>
-            <ul>
-                <li><a> content </a></li>
-            </ul>
 
         {% else %}
             <p>Please log in to view subjects.</p>
         {% endif %}
-    </ul>
+
 {% endblock %}
 
 {% block main_content %}
@@ -99,13 +102,27 @@
     <form method="post" action="{% url 'add_subject_to_user' %}">
         {% csrf_token %}
         <select name="subject_id">
-            <option value="">-- Choose subject --</option>
+            <option value="">-- Choose a subject --</option>
             {% for subject in subjects %}
                 <option value="{{ subject.id }}">{{ subject.name }}</option>
             {% endfor %}
         </select>
         <button type="submit">Add Subject</button>
     </form>
+
+{% if user.student %}
+<h1>Select Course</h1>
+<form method="post" action="{% url 'select_course' %}">
+    {% csrf_token %}
+    <select name="course_id">
+        {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.course_number }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Save Course</button>
+</form>
+{% endif %}
+
 
     <h1>Delete account</h1>
     <form method="post" action="{% url 'delete_account' %}">

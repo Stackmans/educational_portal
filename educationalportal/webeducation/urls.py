@@ -9,7 +9,10 @@ urlpatterns = [
     path('register', views.RegisterView.as_view(), name='register'),
     path('login', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
     path('account/', views.check_account, name='check_account'),
+    path('account/requests', views.requests_info, name='requests'),
+
     path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
     path('subject_info/<slug:subject_name>', views.subject_info, name='subject_info'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),

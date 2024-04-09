@@ -47,3 +47,10 @@ class Student(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class SubjectRequest(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_requests')
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_requests')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    is_confirmed = models.BooleanField(default=False)

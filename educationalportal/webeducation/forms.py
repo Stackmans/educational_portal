@@ -34,3 +34,7 @@ class StudentCourseForm(forms.Form):
         empty_label=None,  # Прибрати пустий варіант
         label='Choose a course',
     )
+
+
+class SubjectRequestForm(forms.Form):
+    pass

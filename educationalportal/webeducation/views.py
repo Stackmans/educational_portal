@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm
-from .models import CustomUser, Teacher, Student, Subject, Course
+from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest
 from .utils import add_subject
 
 info = {
@@ -111,11 +111,6 @@ def subject_info(request, subject_name):
     return render(request, 'webeducation/subject_info.html', {'subject': subject})
 
 
-def requests_info(request):
-
-    return render(request, 'webeducation/requests_to_teacher.html')
-
-
 class SelectCourseView(View):
     def get(self, request):
         courses = Course.objects.all()
@@ -127,6 +122,40 @@ class SelectCourseView(View):
         student.course_id = course_id
         student.save()
         return redirect('check_account')
+
+
+def requests_info(request):
+    requests = SubjectRequest.objects.filter(is_confirmed=False)
+
+    return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
+
+
+def confirm_request(request, request_id):
+    subject_request = get_object_or_404(SubjectRequest, pk=request_id)
+    subject_request.is_confirmed = True
+    subject_request.save()
+    return redirect('requests')
+
+
+class SendRequestView(View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        teacher_id = request.POST.get('teacher_id')
+        subject_id = request.POST.get('subject_id')
+        student = request.user.student  # Assuming the user is a student
+
+        # Check if a similar request already exists
+        existing_request = SubjectRequest.objects.filter(student=student, teacher_id=teacher_id, subject_id=subject_id).first()
+        if existing_request:
+            messages.warning(request, 'Ви вже відправили запит цьому викладачу для цього предмета.')
+        else:
+            # Create a new request if it doesn't exist
+            SubjectRequest.objects.create(student=student, teacher_id=teacher_id, subject_id=subject_id)
+            messages.success(request, 'Запит надіслано успішно!')
+
+        return redirect('home')
 
 
 # ---------------------- User methods ----------------------

@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm
-from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest
+from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
 from .utils import add_subject
 
 info = {
@@ -43,6 +43,12 @@ def index(request):
         'info': info
     }
     return render(request, 'webeducation/index.html', content)
+
+
+def subject_tasks(request, subject_name):
+    subject = Subject.objects.get(name=subject_name)
+
+    return render(request, 'webeducation/subject_tasks.html', {'subject': subject})
 
 
 def get_subjects(request):
@@ -85,7 +91,7 @@ class DeleteSubjectView(View):
         elif user.role == 'student':
             user.student.subjects.remove(subject)
 
-        return redirect('check_account')  # Перенаправлення на сторінку з інформацією про обліковий запис
+        return redirect('check_account')
 
 
 class SubjectTasks(View):

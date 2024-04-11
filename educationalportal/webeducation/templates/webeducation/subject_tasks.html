@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+
+{% block main_content %}
+
+    <h1>{{ subject.name }} Tasks</h1>
+
+        <ul>
+            {% for task in tasks %}
+                <li>{{ task.theme }}</li>
+                <p>{{ task.description }}</p>
+            {% endfor %}
+        </ul>
+
+{% endblock %}

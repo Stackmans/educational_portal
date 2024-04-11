@@ -47,30 +47,32 @@
 
 
             {% elif user.role == 'student' %}
-                {% for subject in user.student.subjects.all %}
 
-                        <form method="POST" action="{% url 'delete_subject' %}">
+                {% for subject in user.student.subjects.all %}
+                    <div>
+                        <form method="POST" action="{% url 'subject_info' subject_name=subject.name %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_info' subject_name=subject.name %}">{{ subject.name }}</a>
-                            <button type="submit" class="btn btn-danger btn-sm">×</button>
+                            <a href="{% url 'subject_tasks' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
+                            <button type="submit" class="btn btn-primary">Find teacher</button>
+                            <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
                         </form>
-
+                    </div>
                 {% endfor %}
 
-                <h3><a> Another </a></h3>
-                    <a>Content</a>
-
+<h3><a> Another </a></h3>
+<a>Content</a>
             {% endif %}
 
-
         {% else %}
+
             <p>Please log in to view subjects.</p>
         {% endif %}
 
 {% endblock %}
 
 {% block main_content %}
+
     <h1>User profile</h1>
 
     <div style="display: flex; margin-bottom: 20px;">

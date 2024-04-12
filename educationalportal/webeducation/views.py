@@ -36,6 +36,19 @@ def check_account(request):
     return render(request, 'webeducation/account_info.html', context)
 
 
+def teacher_accounts(request):
+    teachers = Teacher.objects.all()
+    context = {'teachers': teachers}
+    return render(request, 'webeducation/view_teachers.html', context)
+
+
+def view_students(request, subject_id):
+    subject = Subject.objects.get(id=subject_id)
+    students = Student.objects.filter(subjects=subject)
+    context = {'subject': subject, 'students': students}
+    return render(request, 'webeducation/view_students.html', context)
+
+
 def index(request):
     form = SubjectDisplayForm()
     content = {

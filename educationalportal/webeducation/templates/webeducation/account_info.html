@@ -1,138 +1,127 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block header %}
 
-<div class="d-flex justify-content-between align-items-center">
+{% block header %}
+    <div class="d-flex justify-content-between align-items-center">
         <div class="photo-container">
             <a href="{% url 'home' %}"><img src="{% static 'Images/OOO.avif' %}" alt="Logo"></a>
         </div>
-    {% if user.is_authenticated %}
-        Today is a good day to learn something!
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Log out</button>
-            <a href="{% url 'check_account' %}" class="btn btn-outline-primary">Account</a>
-        </form>
-    {% else %}
-        Welcome to Educational portal!
-        <div>
-            <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
-            <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
-        </div>
-    {% endif %}
-</div>
+        {% if user.is_authenticated %}
+            Today is a good day to learn something!
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Log out</button>
+                <a href="{% url 'check_account' %}" class="btn btn-outline-primary">Account</a>
+            </form>
+        {% else %}
+            Welcome to Educational portal!
+            <div>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
 
+
 {% block left_side_content %}
-    <h3>Subjects</h3>
 
+        <h3>Subjects</h3>
         {% if user.is_authenticated %}
-
-
             {% if user.role == 'teacher' %}
-                {% for subject in user.teacher.subjects.all %}
 
+                {% for subject in user.teacher.subjects.all %}
+                    <div>
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
                             <a href="{% url 'subject_info' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
-
-                {% endfor %}
-
-                <h3><a> Another </a></h3>
-                    <a href="{% url 'requests' %}">Requests</a>
-
-
-            {% elif user.role == 'student' %}
-
-                {% for subject in user.student.subjects.all %}
-                    <div>
-                        <form method="POST" action="{% url 'subject_info' subject_name=subject.name %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_tasks' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
-                            <button type="submit" class="btn btn-primary">Find teacher</button>
-                            <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
-                        </form>
+                        <a href="{% url 'view_students' subject_id=subject.id %}" class="btn btn-outline-primary">View Students</a>
                     </div>
                 {% endfor %}
 
-<h3><a> Another </a></h3>
-<a>Content</a>
+                <h3><a> Another </a></h3>
+                <a href="{% url 'requests' %}">Requests</a>
+
+            {% elif user.role == 'student' %}
+            {% for subject in user.student.subjects.all %}
+            <div>
+                <form method="POST" action="{% url 'subject_info' subject_name=subject.name %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                    <a href="{% url 'subject_tasks' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
+                    <button type="submit" class="btn btn-primary">Find teacher</button>
+                    <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
+                </form>
+            </div>
+            {% endfor %}
+            <h3><a> Another </a></h3>
+            <a>Content</a>
             {% endif %}
-
         {% else %}
-
-            <p>Please log in to view subjects.</p>
+        <p>Please log in to view subjects.</p>
         {% endif %}
 
 {% endblock %}
 
 {% block main_content %}
-
-    <h1>User profile</h1>
-
-    <div style="display: flex; margin-bottom: 20px;">
-        <div style="width: 200px; height: 200px; border: 1px solid #ccc; border-radius: 10px; overflow: hidden; margin-right: 20px;">
-            {% if user.photo %}
-                <img src="{{ user.photo.url }}" alt="User Photo" style="width: 100%; height: 100%; object-fit: cover;">
-            {% else %}
-                <form method="post" enctype="multipart/form-data" action="{% url 'upload_photo' %}">
-                    {% csrf_token %}
-                    <input type="file" name="photo" accept="image/*">
-                    <button type="submit">Upload Photo</button>
-                </form>
-            {% endif %}
-        </div>
-        <div>
-            <p>Username: {{ user.username }}</p>
-            <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-            <p>Role: {{ user.role }}</p>
-            <p>Email: {{ user.email }}</p>
-            {% if user.student %}
-                <p>Course: {{ user.student.course.course_number }}</p>
-            {% endif %}
-        </div>
+<h1>User profile</h1>
+<div style="display: flex; margin-bottom: 20px;">
+    <div style="width: 200px; height: 200px; border: 1px solid #ccc; border-radius: 10px; overflow: hidden; margin-right: 20px;">
+        {% if user.photo %}
+        <img src="{{ user.photo.url }}" alt="User Photo" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+        <form method="post" enctype="multipart/form-data" action="{% url 'upload_photo' %}">
+            {% csrf_token %}
+            <input type="file" name="photo" accept="image/*">
+            <button type="submit">Upload Photo</button>
+        </form>
+        {% endif %}
     </div>
-
-    {% if messages %}
-        {% for message in messages %}
-            <p class="alert alert-{{ message.level }}">{{ message.message }}</p>
+    <div>
+        <p>Username: {{ user.username }}</p>
+        <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+        <p>Role: {{ user.role }}</p>
+        <p>Email: {{ user.email }}</p>
+        {% if user.student %}
+        <p>Course: {{ user.student.course.course_number }}</p>
+        {% endif %}
+    </div>
+</div>
+{% if messages %}
+{% for message in messages %}
+<p class="alert alert-{{ message.level }}">{{ message.message }}</p>
+{% endfor %}
+{% endif %}
+<form method="post" action="{% url 'add_subject_to_user' %}">
+    {% csrf_token %}
+    <select name="subject_id">
+        <option value="">-- Choose a subject --</option>
+        {% for subject in subjects %}
+        <option value="{{ subject.id }}">{{ subject.name }}</option>
         {% endfor %}
-    {% endif %}
-
-    <form method="post" action="{% url 'add_subject_to_user' %}">
-        {% csrf_token %}
-        <select name="subject_id">
-            <option value="">-- Choose a subject --</option>
-            {% for subject in subjects %}
-                <option value="{{ subject.id }}">{{ subject.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Add Subject</button>
-    </form>
-
+    </select>
+    <button type="submit">Add Subject</button>
+</form>
 {% if user.student %}
 <h1>Select Course</h1>
 <form method="post" action="{% url 'select_course' %}">
     {% csrf_token %}
     <select name="course_id">
         {% for course in courses %}
-            <option value="{{ course.id }}">{{ course.course_number }}</option>
+        <option value="{{ course.id }}">{{ course.course_number }}</option>
         {% endfor %}
     </select>
     <button type="submit">Save Course</button>
 </form>
 {% endif %}
-
-
-    <h1>Delete account</h1>
-    <form method="post" action="{% url 'delete_account' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Delete account</button>
-    </form>
+<h1>Delete account</h1>
+<form method="post" action="{% url 'delete_account' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Delete account</button>
+</form>
 {% endblock %}

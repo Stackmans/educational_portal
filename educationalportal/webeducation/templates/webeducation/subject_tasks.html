@@ -70,14 +70,29 @@
 
 
 {% block main_content %}
-
     <h1>{{ subject.name }} Tasks</h1>
 
-        <ul>
-            {% for task in tasks %}
-                <li>{{ task.theme }}</li>
-                <p>{{ task.description }}</p>
-            {% endfor %}
-        </ul>
-
+    {% if user.is_authenticated %}
+        {% if user.role == 'teacher' %}
+            <!-- Інформація для викладача -->
+            <p>Тут буде інформація для викладача.</p>
+        {% elif user.role == 'student' %}
+            <!-- Інформація для студента -->
+            {% if user.student.course %}
+                <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
+                <ul>
+                    {% for task in tasks %}
+                        {% if task.course_num_id == user.student.course_id %}
+                            <li>{{ task.theme }}</li>
+                            <p>{{ task.description }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Для відображення завдань оберіть курс.</p>
+            {% endif %}
+        {% endif %}
+    {% else %}
+        <p>Будь ласка, увійдіть в систему, щоб переглянути завдання.</p>
+    {% endif %}
 {% endblock %}

@@ -3,6 +3,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
+class Course(models.Model):
+    course_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)])
+
+    def __str__(self):
+        return str(self.course_number)
+
+
 class Subject(models.Model):
     name = models.CharField(max_length=50)
 
@@ -14,6 +21,7 @@ class Task(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     theme = models.CharField(max_length=200)
     description = models.TextField()
+    course_num = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
 
 class CustomUser(AbstractUser):
@@ -31,13 +39,6 @@ class UploadsModel(models.Model):
 class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='teacher', null=True, blank=True)
     subjects = models.ManyToManyField(Subject)
-
-
-class Course(models.Model):
-    course_number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)])
-
-    def __str__(self):
-        return str(self.course_number)
 
 
 class Student(models.Model):

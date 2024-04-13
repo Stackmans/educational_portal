@@ -60,9 +60,16 @@ def index(request):
 
 def subject_tasks(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
-    tasks = subject.task_set.all()  # Assuming Task has a ForeignKey to Subject
+    tasks = Task.objects.filter(subject=subject)
 
-    return render(request, 'webeducation/subject_tasks.html', {'subject': subject, 'tasks': tasks})
+    # Якщо користувач - студент і вибрав курс
+    if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
+        # Фільтруємо завдання за курсом студента
+        tasks = tasks.filter(course_num=request.user.student.course)
+
+    context = {'subject': subject, 'tasks': tasks}
+
+    return render(request, 'webeducation/subject_tasks.html', context)
 
 
 def get_subjects(request):

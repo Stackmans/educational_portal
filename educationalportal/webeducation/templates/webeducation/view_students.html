@@ -1,29 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block header %}
-<div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center">
         <div class="photo-container">
             <a href="{% url 'home' %}"><img src="{% static 'Images/OOO.avif' %}" alt="Logo"></a>
         </div>
-
-{% if user.is_authenticated %}
-    Today is a good day to learn something!
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Log out</button>
-        <a href="{% url 'check_account' %}" class="btn btn-outline-primary">Account</a>
-    </form>
-
-{% else %}
-    Welcome to Educational portal!
-    <div>
-        <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
-        <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
+        {% if user.is_authenticated %}
+            Today is a good day to learn something!
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Log out</button>
+                <a href="{% url 'check_account' %}" class="btn btn-outline-primary">Account</a>
+            </form>
+        {% else %}
+            Welcome to Educational portal!
+            <div>
+                <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary ml-2">Log in</a>
+            </div>
+        {% endif %}
     </div>
-
-</div>
-{% endif %}
 {% endblock %}
 
 
@@ -58,7 +56,6 @@
                     <button type="submit" class="btn btn-primary">Find teacher</button>
                     <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
                 </form>
-
             </div>
             {% endfor %}
             <h3><a> Another </a></h3>
@@ -70,6 +67,16 @@
 
 {% endblock %}
 
+
 {% block main_content %}
-Main content
+    <h1>Students who learn {{ subject.name }}</h1>
+    <ul>
+        {% for request in subject.subjectrequest_set.all %}
+            {% if request.is_confirmed %}
+                <li>{{ request.student.user.first_name }} {{ request.student.user.last_name }}</li>
+            {% endif %}
+        {% empty %}
+            <li>No students found for this subject</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

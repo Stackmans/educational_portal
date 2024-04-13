@@ -58,10 +58,11 @@ def index(request):
     return render(request, 'webeducation/index.html', content)
 
 
-def subject_tasks(request, subject_name):
-    subject = Subject.objects.get(name=subject_name)
+def subject_tasks(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    tasks = subject.task_set.all()  # Assuming Task has a ForeignKey to Subject
 
-    return render(request, 'webeducation/subject_tasks.html', {'subject': subject})
+    return render(request, 'webeducation/subject_tasks.html', {'subject': subject, 'tasks': tasks})
 
 
 def get_subjects(request):
@@ -124,10 +125,10 @@ class SubjectTasks(View):
 #         pass
 
 
-def subject_info(request, subject_name):
+def view_teachers(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
 
-    return render(request, 'webeducation/subject_info.html', {'subject': subject})
+    return render(request, 'webeducation/view_teachers.html', {'subject': subject})
 
 
 class SelectCourseView(View):

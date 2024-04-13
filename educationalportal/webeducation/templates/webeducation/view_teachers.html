@@ -2,12 +2,14 @@
 {% load static %}
 
 {% block header %}
+
 <div class="d-flex justify-content-between align-items-center">
+
         <div class="photo-container">
             <a href="{% url 'home' %}"><img src="{% static 'Images/OOO.avif' %}" alt="Logo"></a>
         </div>
-
 {% if user.is_authenticated %}
+
     Today is a good day to learn something!
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
@@ -16,6 +18,7 @@
     </form>
 
 {% else %}
+
     Welcome to Educational portal!
     <div>
         <a href="{% url 'register' %}" class="btn btn-outline-primary">Register</a>
@@ -58,7 +61,6 @@
                     <button type="submit" class="btn btn-primary">Find teacher</button>
                     <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
                 </form>
-
             </div>
             {% endfor %}
             <h3><a> Another </a></h3>
@@ -70,6 +72,26 @@
 
 {% endblock %}
 
+
 {% block main_content %}
-Main content
+    {% if user.role == 'student' %}
+        <h1>Teachers</h1>
+        <ul>
+            {% for teacher in subject.teacher_set.all %}
+                <li>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>{{ teacher.user.first_name }} {{ teacher.user.last_name }}</span>
+                        <form method="POST" action="{% url 'send_request' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="teacher_id" value="{{ teacher.id }}">
+                            <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                            <button type="submit" class="btn btn-primary">Send Request</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif user.role == 'teacher' %}
+        <h1>Students</h1>
+    {% endif %}
 {% endblock %}

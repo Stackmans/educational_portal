@@ -36,7 +36,7 @@
                         <form method="POST" action="{% url 'delete_subject' %}">
                             {% csrf_token %}
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_info' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
+                            <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
                             <button type="submit" class="btn btn-danger btn-sm">×</button>
                         </form>
                         <a href="{% url 'view_students' subject_id=subject.id %}" class="btn btn-outline-primary">View Students</a>
@@ -49,10 +49,10 @@
             {% elif user.role == 'student' %}
             {% for subject in user.student.subjects.all %}
             <div>
-                <form method="POST" action="{% url 'subject_info' subject_name=subject.name %}">
+                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
                     {% csrf_token %}
                     <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                    <a href="{% url 'subject_tasks' subject_name=subject.name|slugify|title %}">{{ subject.name }}</a>
+                    <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
                     <button type="submit" class="btn btn-primary">Find teacher</button>
                     <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
                 </form>

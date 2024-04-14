@@ -25,7 +25,6 @@
 {% endblock %}
 
 
-
 {% block left_side_content %}
 
         <h3>Subjects</h3>
@@ -47,53 +46,23 @@
                 <h3><a> Another </a></h3>
                 <a href="{% url 'requests' %}">Requests</a>
 
-            {% elif user.role == 'student' %}
-            {% for subject in user.student.subjects.all %}
-            <div>
-                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                    <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
-                    <button type="submit" class="btn btn-primary">Find teacher</button>
-                    <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
-                </form>
-            </div>
-            {% endfor %}
-            <h3><a> Another </a></h3>
-            <a>Content</a>
             {% endif %}
-        {% else %}
-        <p>Please log in to view subjects.</p>
+
         {% endif %}
 
 {% endblock %}
 
 
 {% block main_content %}
+
     <h1>{{ subject.name }} Tasks</h1>
 
-    {% if user.is_authenticated %}
-        {% if user.role == 'teacher' %}
-            <p>Тут буде інформація для викладача.</p>
-            {% for course in courses %}
-                <p><a href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
-            {% endfor %}
-        {% elif user.role == 'student' %}
-            {% if user.student.course %}
-                <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
-                <ul>
-                    {% for task in tasks %}
-                        {% if task.course_num_id == user.student.course_id %}
-                            <li>{{ task.theme }}</li>
-                            <p>{{ task.description }}</p>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Для відображення завдань оберіть курс.</p>
-            {% endif %}
-        {% endif %}
-    {% else %}
-        <p>Будь ласка, увійдіть в систему, щоб переглянути завдання.</p>
-    {% endif %}
+    <h2>Tasks for Course {{ course.course_number }}</h2>
+    <ul>
+        {% for task in course.task_set.all %}
+            <li>{{ task.theme }}</li>
+            <p>{{ task.description }}</p>
+        {% endfor %}
+    </ul>
+
 {% endblock %}

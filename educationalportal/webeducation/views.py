@@ -61,15 +61,25 @@ def index(request):
 def subject_tasks(request, subject_id):
     subject = get_object_or_404(Subject, id=subject_id)
     tasks = Task.objects.filter(subject=subject)
+    courses = Course.objects.all()
 
     # Якщо користувач - студент і вибрав курс
     if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
         # Фільтруємо завдання за курсом студента
         tasks = tasks.filter(course_num=request.user.student.course)
 
-    context = {'subject': subject, 'tasks': tasks}
+    context = {'subject': subject, 'tasks': tasks, 'courses': courses}
 
     return render(request, 'webeducation/subject_tasks.html', context)
+
+
+def subject_teacher_tasks(request, subject_id, course_id):
+    subject = get_object_or_404(Subject, id=subject_id)  # try course_number(not id)
+    course = get_object_or_404(Course, id=course_id)
+
+    context = {'subject': subject, 'course': course}
+
+    return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
 def get_subjects(request):

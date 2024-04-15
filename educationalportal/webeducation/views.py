@@ -3,13 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import CreateView
-
-from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm, \
-    AddTaskForm
+from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
 from .utils import add_subject
 
@@ -27,7 +23,7 @@ class UploadPhotoView(View):
         form = PhotoUploadForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('check_account')  # або інша сторінка
+            return redirect('check_account')
         return render(request, 'webeducation/upload_photo.html', {'form': form})
 
 
@@ -66,9 +62,7 @@ def subject_tasks(request, subject_id):
     tasks = Task.objects.filter(subject=subject)
     courses = Course.objects.all()
 
-    # Якщо користувач - студент і вибрав курс
     if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
-        # Фільтруємо завдання за курсом студента
         tasks = tasks.filter(course_num=request.user.student.course)
 
     context = {'subject': subject, 'tasks': tasks, 'courses': courses}
@@ -84,19 +78,6 @@ def subject_teacher_tasks(request, subject_id, course_id):
     return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
-# def add_task(request):
-#     if request.method == 'POST':
-#         form = AddTaskForm(request.POST)
-#         if form.is_valid():
-#             task = form.save()
-#             # Додаткова обробка перед збереженням, якщо потрібно
-#             task.save()
-#             return redirect('home')  # або інша сторінка після додавання завдання
-#     else:
-#         form = AddTaskForm()
-#     return render(request, 'webeducation/add_task.html', {'form': form})
-
-
 class AddTaskView(View):
     def get(self, request):
         form = AddTaskForm()
@@ -106,13 +87,10 @@ class AddTaskView(View):
         form = AddTaskForm(request.POST)
         if form.is_valid():
             task = form.save()
-            # Додаткова обробка перед збереженням, якщо потрібно
             task.save()
             return redirect('home')
 
         return render(request, 'webeducation/add_task.html', {'form': form})
-
-
 
 
 def get_subjects(request):
@@ -147,7 +125,7 @@ class DeleteSubjectView(View):
 
     def post(self, request):
         user = request.user
-        subject_id = request.POST.get('subject_id')  # !!!!!!в шаблоні передати предмети
+        subject_id = request.POST.get('subject_id')
         subject = get_object_or_404(Subject, id=subject_id)
 
         if user.role == 'teacher':
@@ -167,14 +145,6 @@ class SubjectTasks(View):
         pass
 
 
-# class SubjectInfo(View):
-#     def get(self, request):
-#         pass
-#
-#     def post(self, request):
-#         pass
-
-
 def view_teachers(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
 
@@ -188,7 +158,7 @@ class SelectCourseView(View):
 
     def post(self, request):
         course_id = request.POST.get('course_id')
-        student = request.user.student  # Assuming user is logged in and a student
+        student = request.user.student
         student.course_id = course_id
         student.save()
         return redirect('check_account')
@@ -214,14 +184,12 @@ class SendRequestView(View):
     def post(self, request):
         teacher_id = request.POST.get('teacher_id')
         subject_id = request.POST.get('subject_id')
-        student = request.user.student  # Assuming the user is a student
+        student = request.user.student
 
-        # Check if a similar request already exists
         existing_request = SubjectRequest.objects.filter(student=student, teacher_id=teacher_id, subject_id=subject_id).first()
         if existing_request:
             messages.warning(request, 'Ви вже відправили запит цьому викладачу для цього предмета.')
         else:
-            # Create a new request if it doesn't exist
             SubjectRequest.objects.create(student=student, teacher_id=teacher_id, subject_id=subject_id)
             messages.success(request, 'Запит надіслано успішно!')
 
@@ -249,16 +217,15 @@ class RegisterView(View):
             user = CustomUser.objects.create_user(username=username, role=role, first_name=first_name,
                                                   last_name=last_name, email=email, password=password)
 
-            # Створення об'єкта вчителя або студента
             if role == 'teacher':
                 Teacher.objects.create(user=user)
             elif role == 'student':
                 Student.objects.create(user=user)
-            # Відразу вхід після реєстрації
+
             login(request, user)
 
             messages.success(request, 'Ви успішно зареєструвалися!')
-            return redirect('home')  # Перенаправлення на головну сторінку після реєстрації
+            return redirect('home')
         else:
             messages.error(request, 'Будь ласка, виправте помилки у формі.')
             return render(request, 'webeducation/register.html', {'form': form})
@@ -277,7 +244,7 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')  # або інша сторінка після успішного входу
+                return redirect('home')
             else:
                 messages.error(request, 'Неправильний логін або пароль.')
         return render(request, 'webeducation/login.html', {'form': form})

@@ -60,8 +60,10 @@
     <h2>Tasks for Course {{ course.course_number }}</h2>
     <ul>
         {% for task in course.task_set.all %}
-            <li>{{ task.theme }}</li>
-            <p>{{ task.description }}</p>
+            {% if task.subject_id == subject.id %}
+                <li>{{ task.theme }}</li>
+                <p>{{ task.description }}</p>
+            {% endif %}
         {% endfor %}
     </ul>
 

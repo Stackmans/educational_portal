@@ -3,10 +3,13 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import CreateView
 
-from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm
+from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, StudentCourseForm, \
+    AddTaskForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
 from .utils import add_subject
 
@@ -74,12 +77,24 @@ def subject_tasks(request, subject_id):
 
 
 def subject_teacher_tasks(request, subject_id, course_id):
-    subject = get_object_or_404(Subject, id=subject_id)  # try course_number(not id)
+    subject = get_object_or_404(Subject, id=subject_id)
     course = get_object_or_404(Course, id=course_id)
 
     context = {'subject': subject, 'course': course}
-
     return render(request, 'webeducation/subject_teacher_tasks.html', context)
+
+
+def add_task(request):
+    if request.method == 'POST':
+        form = AddTaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            # Додаткова обробка перед збереженням, якщо потрібно
+            task.save()
+            return redirect('home')  # або інша сторінка після додавання завдання
+    else:
+        form = AddTaskForm()
+    return render(request, 'webeducation/add_task.html', {'form': form})
 
 
 def get_subjects(request):

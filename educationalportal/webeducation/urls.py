@@ -21,6 +21,7 @@ urlpatterns = [
 
     path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),
 
+    path('add_task/', views.add_task, name='add_task'),
 
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
     path('delete', views.DeleteAccount.as_view(), name='delete_account'),

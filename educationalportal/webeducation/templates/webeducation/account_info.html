@@ -44,7 +44,9 @@
                 {% endfor %}
 
                 <h3><a> Another </a></h3>
-                <a href="{% url 'requests' %}">Requests</a>
+                    <p><a href="{% url 'requests' %}">Requests</a></p>
+                    <p><a href="{% url 'add_task' %}">Add task</a></p>
+
 
             {% elif user.role == 'student' %}
             {% for subject in user.student.subjects.all %}
@@ -67,7 +69,10 @@
 
 {% endblock %}
 
+
+
 {% block main_content %}
+
 <h1>User profile</h1>
 <div style="display: flex; margin-bottom: 20px;">
     <div style="width: 200px; height: 200px; border: 1px solid #ccc; border-radius: 10px; overflow: hidden; margin-right: 20px;">

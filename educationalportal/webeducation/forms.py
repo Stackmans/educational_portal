@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Subject, Course
+from .models import CustomUser, Subject, Course, Task
+
+
+class SubjectRequestForm(forms.Form):
+    pass
 
 
 class PhotoUploadForm(forms.ModelForm):
@@ -36,5 +40,7 @@ class StudentCourseForm(forms.Form):
     )
 
 
-class SubjectRequestForm(forms.Form):
-    pass
+class AddTaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['subject', 'theme', 'description', 'course_num']

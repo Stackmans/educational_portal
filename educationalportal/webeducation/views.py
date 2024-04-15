@@ -88,7 +88,7 @@ def add_task(request):
     if request.method == 'POST':
         form = AddTaskForm(request.POST)
         if form.is_valid():
-            task = form.save(commit=False)
+            task = form.save()
             # Додаткова обробка перед збереженням, якщо потрібно
             task.save()
             return redirect('home')  # або інша сторінка після додавання завдання

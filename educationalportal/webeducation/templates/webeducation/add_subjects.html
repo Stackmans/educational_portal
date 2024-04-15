@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block main_content %}
+
 <h1>Add Subject</h1>
 <form method="POST" action="{% url 'add_subject_to_user' %}">
     {% csrf_token %}
@@ -12,4 +15,5 @@
     </select>
     <button type="submit" class="btn btn-primary">Add Subject</button>
 </form>
+
 {% endblock %}

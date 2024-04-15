@@ -84,17 +84,35 @@ def subject_teacher_tasks(request, subject_id, course_id):
     return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
-def add_task(request):
-    if request.method == 'POST':
+# def add_task(request):
+#     if request.method == 'POST':
+#         form = AddTaskForm(request.POST)
+#         if form.is_valid():
+#             task = form.save()
+#             # Додаткова обробка перед збереженням, якщо потрібно
+#             task.save()
+#             return redirect('home')  # або інша сторінка після додавання завдання
+#     else:
+#         form = AddTaskForm()
+#     return render(request, 'webeducation/add_task.html', {'form': form})
+
+
+class AddTaskView(View):
+    def get(self, request):
+        form = AddTaskForm()
+        return render(request, 'webeducation/add_task.html', {'form': form})
+
+    def post(self, request):
         form = AddTaskForm(request.POST)
         if form.is_valid():
             task = form.save()
             # Додаткова обробка перед збереженням, якщо потрібно
             task.save()
-            return redirect('home')  # або інша сторінка після додавання завдання
-    else:
-        form = AddTaskForm()
-    return render(request, 'webeducation/add_task.html', {'form': form})
+            return redirect('home')
+
+        return render(request, 'webeducation/add_task.html', {'form': form})
+
+
 
 
 def get_subjects(request):

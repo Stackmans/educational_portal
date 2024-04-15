@@ -18,10 +18,10 @@ urlpatterns = [
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
     path('subject/<int:subject_id>/', views.subject_tasks, name='subject_tasks'),
-
     path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),
 
-    path('add_task/', views.add_task, name='add_task'),
+    # path('add_task/', views.add_task, name='add_task'),
+    path('add_task/', views.AddTaskView.as_view(), name='add_task'),
 
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
     path('delete', views.DeleteAccount.as_view(), name='delete_account'),

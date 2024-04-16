@@ -11,6 +11,10 @@
             {% csrf_token %}
             <button type="submit">Confirm</button>
         </form>
+        <form method="POST" action="{% url 'reject_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Reject</button>
+        </form>
     </div>
 {% endfor %}
 {% endblock %}

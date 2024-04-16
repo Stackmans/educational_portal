@@ -177,6 +177,12 @@ def confirm_request(request, request_id):
     return redirect('requests')
 
 
+def reject_request(request, request_id):
+    subject_request = get_object_or_404(SubjectRequest, pk=request_id)
+    subject_request.delete()
+    return redirect('requests')
+
+
 class SendRequestView(View):
     def get(self, request):
         pass

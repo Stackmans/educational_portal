@@ -5,7 +5,7 @@
 {% block main_content %}
 {% for request in requests %}
     <div>
-        <p>From: {{ request.student.user.username }}</p>
+        <p>From: {{ request.student.user.first_name }} {{ request.student.user.last_name }}</p>
         <p>Subject: {{ request.subject.name }}</p>
         <form method="POST" action="{% url 'confirm_request' request.id %}">
             {% csrf_token %}

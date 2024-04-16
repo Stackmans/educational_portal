@@ -45,10 +45,11 @@
             </div>
         </div>
         <div class="row">
-            <!-- Ліва частина зверху до низу -->
-            <div class="col-md-2 left-section">
-                <h2>
-                {% block left_side_content %}
+
+
+<div class="col-md-2 left-section">
+<h2>
+{% block left_side_content %}
 
         <h3>Subjects</h3>
         {% if user.is_authenticated %}
@@ -90,12 +91,12 @@
         <p>Please log in to view subjects.</p>
         {% endif %}
 
-{% endblock %}</h2>
-            </div>
+{% endblock %}
+</h2>
+</div>
 
 
             <div class="col-md-10 dark-content">
-                <!-- Основний вміст сторінки буде розміщений тут -->
                 <h3>{% block main_content %} {% endblock %}</h3>
             </div>
         </div>

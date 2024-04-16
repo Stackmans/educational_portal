@@ -3,11 +3,25 @@
 
 
 {% block main_content %}
-
     <h2>Add Task</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.subject.label_tag }}
+        <select name="subject" id="id_subject">
+            {% for subject in user.teacher.subjects.all %}
+                <option value="{{ subject.id }}">{{ subject.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        {{ form.theme.label_tag }}
+        {{ form.theme }}
+        <br>
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        <br>
+        {{ form.course_num.label_tag }}
+        {{ form.course_num }}
+        <br>
         <button type="submit">Add Task</button>
     </form>
 {% endblock %}

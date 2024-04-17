@@ -50,11 +50,11 @@ def view_students(request, subject_id):
 
 def index(request):
     form = SubjectDisplayForm()
-    content = {
+    context = {
         'form': form,
         'info': info
     }
-    return render(request, 'webeducation/index.html', content)
+    return render(request, 'webeducation/index.html', context)
 
 
 def subject_tasks(request, subject_id):

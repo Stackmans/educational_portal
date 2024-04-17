@@ -136,15 +136,6 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
-class SubjectTasks(View):
-
-    def get(self, request):
-        pass
-
-    def post(self, request):
-        pass
-
-
 def view_teachers(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
 

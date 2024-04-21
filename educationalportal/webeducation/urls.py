@@ -9,15 +9,16 @@ urlpatterns = [
     path('register', views.RegisterView.as_view(), name='register'),
     path('login', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('account/', views.check_account, name='check_account'),
-    path('view_students/<int:subject_id>/', views.view_students, name='view_students'),
-    path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
+    path('account/', views.AccountInfo.as_view(), name='check_account'),
+    path('view_students/<int:subject_id>/', views.StudentsList.as_view(), name='view_students'),
+
+    path('view_teachers/<slug:subject_name>', views.TeachersList.as_view(), name='view_teachers'),
+    # path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
+
     path('account/requests', views.requests_info, name='requests'),
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),
-
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('reject_request/<int:request_id>/', views.reject_request, name='reject_request'),
-
     path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
     path('subject/<int:subject_id>/', views.subject_tasks, name='subject_tasks'),
     path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),

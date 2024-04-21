@@ -28,24 +28,37 @@ class UploadPhotoView(View):
 
 
 # ------------------------------СЮДИ ДОДАВАТИ КОНТЕКСТ----------------------------------------
-def check_account(request):
-    courses = Course.objects.all()
-    subjects = Subject.objects.all()
-    context = {'subjects': subjects, 'courses': courses}
-    return render(request, 'webeducation/account_info.html', context)
+# def check_account(request):
+#     courses = Course.objects.all()
+#     subjects = Subject.objects.all()
+#     context = {'subjects': subjects, 'courses': courses}
+#     return render(request, 'webeducation/account_info.html', context)
 
 
-def teacher_accounts(request):
-    teachers = Teacher.objects.all()
-    context = {'teachers': teachers}
-    return render(request, 'webeducation/view_teachers.html', context)
+class AccountInfo(View):
+    def get(self, request):
+        courses = Course.objects.all()
+        subjects = Subject.objects.all()
+        context = {'subjects': subjects, 'courses': courses}
+        return render(request, 'webeducation/account_info.html', context)
+
+    def post(self, request):
+        pass  # nothing to do?
 
 
-def view_students(request, subject_id):
-    subject = Subject.objects.get(id=subject_id)
-    students = Student.objects.filter(subjects=subject)
-    context = {'subject': subject, 'students': students}
-    return render(request, 'webeducation/view_students.html', context)
+# def view_students(request, subject_id):
+#     subject = Subject.objects.get(id=subject_id)
+#     students = Student.objects.filter(subjects=subject)
+#     context = {'subject': subject, 'students': students}
+#     return render(request, 'webeducation/view_students.html', context)
+
+
+class StudentsList(View):
+    def get(self, request, subject_id):
+        subject = Subject.objects.get(id=subject_id)
+        students = Student.objects.filter(subjects=subject)
+        context = {'subject': subject, 'students': students}
+        return render(request, 'webeducation/view_students.html', context)
 
 
 def index(request):
@@ -136,10 +149,23 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
+@login_required
 def view_teachers(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
 
     return render(request, 'webeducation/view_teachers.html', {'subject': subject})
+
+
+class TeachersList(View):
+    @login_required
+    def get(self, request, subject_name):
+        subject = get_object_or_404(Subject, name=subject_name)
+        if request.user.role == 'student':
+            teachers = subject.teacher_set.all()
+            return render(request, 'view_teachers.html', {'subject': subject, 'teachers': teachers})
+
+    def post(self, request):
+        pass
 
 
 class SelectCourseView(View):

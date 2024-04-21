@@ -25,7 +25,12 @@ class Task(models.Model):
 
 
 class CustomUser(AbstractUser):
-    role = models.CharField(max_length=7)
+    # CHOICES = (
+    #     (1, 'student'),
+    #     (2, 'teacher'),
+    #
+    # )
+    role = models.CharField(max_length=7)  # , choices=CHOICES, default=1
     photo = models.ImageField(upload_to='user_photos/', null=True, blank=True)
 
     def __str__(self):

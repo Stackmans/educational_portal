@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -156,16 +157,22 @@ def view_teachers(request, subject_name):
     return render(request, 'webeducation/view_teachers.html', {'subject': subject})
 
 
-class TeachersList(View):
-    @login_required
-    def get(self, request, subject_name):
-        subject = get_object_or_404(Subject, name=subject_name)
-        if request.user.role == 'student':
-            teachers = subject.teacher_set.all()
-            return render(request, 'view_teachers.html', {'subject': subject, 'teachers': teachers})
-
-    def post(self, request):
-        pass
+# class TeachersListView(View):  # what??
+#
+#     def get_context_data(self, request, *args, **kwargs):
+#         context = super().get_context_data(*args, **kwargs)
+#         context['user'] = request.user
+#         return context
+#
+#     @login_required
+#     def get(self, request, subject_name):
+#         subject = get_object_or_404(Subject, name=subject_name)
+#         context = self.get_context_data(request, subject_name=subject_name)
+#         return render(request, 'webeducation/view_teachers.html', context)
+#
+#     @login_required
+#     def post(self, request, subject_name):
+#         pass
 
 
 class SelectCourseView(View):

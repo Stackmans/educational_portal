@@ -71,17 +71,31 @@ def index(request):
     return render(request, 'webeducation/index.html', context)
 
 
-def subject_tasks(request, subject_id):
-    subject = get_object_or_404(Subject, id=subject_id)
-    tasks = Task.objects.filter(subject=subject)
-    courses = Course.objects.all()
+# def subject_tasks(request, subject_id):
+#     subject = get_object_or_404(Subject, id=subject_id)
+#     tasks = Task.objects.filter(subject=subject)
+#     courses = Course.objects.all()
+#
+#     if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
+#         tasks = tasks.filter(course_num=request.user.student.course)
+#
+#     context = {'subject': subject, 'tasks': tasks, 'courses': courses}
+#
+#     return render(request, 'webeducation/subject_tasks.html', context)
 
-    if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
-        tasks = tasks.filter(course_num=request.user.student.course)
 
-    context = {'subject': subject, 'tasks': tasks, 'courses': courses}
+class SubjectTasksView(View):
+    def get(self, request, subject_id):
+        subject = get_object_or_404(Subject, id=subject_id)
+        tasks = Task.objects.filter(subject=subject)
+        courses = Course.objects.all()
 
-    return render(request, 'webeducation/subject_tasks.html', context)
+        if request.user.role == 'student' and request.user.student.course:
+            tasks = tasks.filter(course_num=request.user.student.course)
+
+        context = {'subject': subject, 'tasks': tasks, 'courses': courses}
+
+        return render(request, 'webeducation/subject_tasks.html', context)
 
 
 def subject_teacher_tasks(request, subject_id, course_id):
@@ -188,20 +202,27 @@ class SelectCourseView(View):
         return redirect('check_account')
 
 
-def requests_info(request):
-    requests = SubjectRequest.objects.filter(is_confirmed=False)
+# @login_required
+# def requests_info(request):
+#     requests = SubjectRequest.objects.filter(is_confirmed=False)
+#
+#     return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
 
-    return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
+
+class RequestsView(View):
+    def get(self, request):
+        requests = SubjectRequest.objects.filter(is_confirmed=False)
+        return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
 
 
-def confirm_request(request, request_id):
+def confirm_request(request, request_id):  # utils?
     subject_request = get_object_or_404(SubjectRequest, pk=request_id)
     subject_request.is_confirmed = True
     subject_request.save()
     return redirect('requests')
 
 
-def reject_request(request, request_id):
+def reject_request(request, request_id):  # utils?
     subject_request = get_object_or_404(SubjectRequest, pk=request_id)
     subject_request.delete()
     return redirect('requests')

@@ -12,8 +12,8 @@ urlpatterns = [
     path('account/', views.AccountInfo.as_view(), name='check_account'),
     path('view_students/<int:subject_id>/', views.StudentsList.as_view(), name='view_students'),
 
-    path('view_teachers/<slug:subject_name>', views.TeachersList.as_view(), name='view_teachers'),
-    # path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
+    # path('view_teachers/<slug:subject_name>', views.TeachersListView.as_view(), name='view_teachers'),
+    path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
 
     path('account/requests', views.requests_info, name='requests'),
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),

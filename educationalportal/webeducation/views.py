@@ -28,14 +28,6 @@ class UploadPhotoView(View):
         return render(request, 'webeducation/upload_photo.html', {'form': form})
 
 
-# ------------------------------СЮДИ ДОДАВАТИ КОНТЕКСТ----------------------------------------
-# def check_account(request):
-#     courses = Course.objects.all()
-#     subjects = Subject.objects.all()
-#     context = {'subjects': subjects, 'courses': courses}
-#     return render(request, 'webeducation/account_info.html', context)
-
-
 class AccountInfo(View):
     def get(self, request):
         courses = Course.objects.all()
@@ -45,13 +37,6 @@ class AccountInfo(View):
 
     def post(self, request):
         pass  # nothing to do?
-
-
-# def view_students(request, subject_id):
-#     subject = Subject.objects.get(id=subject_id)
-#     students = Student.objects.filter(subjects=subject)
-#     context = {'subject': subject, 'students': students}
-#     return render(request, 'webeducation/view_students.html', context)
 
 
 class StudentsList(View):
@@ -69,19 +54,6 @@ def index(request):
         'info': info
     }
     return render(request, 'webeducation/index.html', context)
-
-
-# def subject_tasks(request, subject_id):
-#     subject = get_object_or_404(Subject, id=subject_id)
-#     tasks = Task.objects.filter(subject=subject)
-#     courses = Course.objects.all()
-#
-#     if request.user.is_authenticated and request.user.role == 'student' and request.user.student.course:
-#         tasks = tasks.filter(course_num=request.user.student.course)
-#
-#     context = {'subject': subject, 'tasks': tasks, 'courses': courses}
-#
-#     return render(request, 'webeducation/subject_tasks.html', context)
 
 
 class SubjectTasksView(View):

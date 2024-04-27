@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -16,9 +15,9 @@ info = {
 
 
 class UploadPhotoView(View):
-    def get(self, request):
-        form = PhotoUploadForm(instance=request.user)
-        return render(request, 'webeducation/upload_photo.html', {'form': form})
+    # def get(self, request):
+    #     form = PhotoUploadForm(instance=request.user)
+    #     return render(request, 'webeducation/upload_photo.html', {'form': form})
 
     def post(self, request):
         form = PhotoUploadForm(request.POST, request.FILES, instance=request.user)
@@ -35,8 +34,8 @@ class AccountInfo(View):
         context = {'subjects': subjects, 'courses': courses}
         return render(request, 'webeducation/account_info.html', context)
 
-    def post(self, request):
-        pass  # nothing to do?
+    # def post(self, request):
+    #     pass  # nothing to do?
 
 
 class StudentsList(View):
@@ -47,13 +46,23 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
-def index(request):
-    form = SubjectDisplayForm()
-    context = {
-        'form': form,
-        'info': info
-    }
-    return render(request, 'webeducation/index.html', context)
+# def index(request):
+#     form = SubjectDisplayForm()
+#     context = {
+#         'form': form,
+#         'info': info
+#     }
+#     return render(request, 'webeducation/index.html', context)
+
+
+class IndexView(View):
+    def get(self, request):
+        form = SubjectDisplayForm()
+        context = {
+            'form': form,
+            'info': info
+        }
+        return render(request, 'webeducation/index.html', context)
 
 
 class SubjectTasksView(View):
@@ -70,12 +79,21 @@ class SubjectTasksView(View):
         return render(request, 'webeducation/subject_tasks.html', context)
 
 
-def subject_teacher_tasks(request, subject_id, course_id):
-    subject = get_object_or_404(Subject, id=subject_id)
-    course = get_object_or_404(Course, id=course_id)
+# def subject_teacher_tasks(request, subject_id, course_id):
+#     subject = get_object_or_404(Subject, id=subject_id)
+#     course = get_object_or_404(Course, id=course_id)
+#
+#     context = {'subject': subject, 'course': course}
+#     return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
-    context = {'subject': subject, 'course': course}
-    return render(request, 'webeducation/subject_teacher_tasks.html', context)
+
+class SubjectTeacherTasksView(View):
+    def get(self, request, subject_id, course_id):
+        subject = get_object_or_404(Subject, id=subject_id)
+        course = get_object_or_404(Course, id=course_id)
+
+        context = {'subject': subject, 'course': course}
+        return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
 class AddTaskView(View):
@@ -106,17 +124,31 @@ def get_subjects(request):
         return render(request, 'webeducation/login.html')
 
 
-@login_required
-def add_subject_to_user(request):
-    subjects = Subject.objects.all()
-    if request.method == 'POST':
+# @login_required
+# def add_subject_to_user(request):
+#     subjects = Subject.objects.all()
+#     if request.method == 'POST':
+#         subject_ids = request.POST.getlist('subject_id')
+#         for subject_id in subject_ids:
+#             subject = get_object_or_404(Subject, id=subject_id)
+#             add_subject(subject, request.user.username)
+#         return redirect('check_account')
+#     else:
+#         return render(request, 'webeducation/check_account.html', {'subjects': subjects})
+
+
+# @login_required
+class AddSubjectToUserView(View):
+    # def get(self, request):
+    #     subjects = Subject.objects.all()
+    #     return render(request, 'webeducation/check_account.html', {'subjects': subjects})
+
+    def post(self, request):
         subject_ids = request.POST.getlist('subject_id')
         for subject_id in subject_ids:
             subject = get_object_or_404(Subject, id=subject_id)
             add_subject(subject, request.user.username)
         return redirect('check_account')
-    else:
-        return render(request, 'webeducation/check_account.html', {'subjects': subjects})
 
 
 class DeleteSubjectView(View):

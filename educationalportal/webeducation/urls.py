@@ -6,7 +6,9 @@ from . import views
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.index, name='home'),
+    # path('', views.index, name='home'),
+    path('', views.IndexView.as_view(), name='home'),
+
     path('register', views.RegisterView.as_view(), name='register'),
     path('login', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
@@ -23,13 +25,16 @@ urlpatterns = [
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('reject_request/<int:request_id>/', views.reject_request, name='reject_request'),
-    path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
+
+    # path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
+    path('add_subject_to_user/', views.AddSubjectToUserView.as_view(), name='add_subject_to_user'),
 
     # path('subject/<int:subject_id>/', views.subject_tasks, name='subject_tasks'),
     path('subject/<int:subject_id>/', login_required(views.SubjectTasksView.as_view()), name='subject_tasks'),
 
+    # path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),
+    path('subject/<int:subject_id>/<int:course_id>', views.SubjectTeacherTasksView.as_view(), name='subject_teacher_tasks'),
 
-    path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
     path('delete', views.DeleteAccount.as_view(), name='delete_account'),

@@ -46,15 +46,6 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
-# def index(request):
-#     form = SubjectDisplayForm()
-#     context = {
-#         'form': form,
-#         'info': info
-#     }
-#     return render(request, 'webeducation/index.html', context)
-
-
 class IndexView(View):
     def get(self, request):
         form = SubjectDisplayForm()
@@ -63,6 +54,14 @@ class IndexView(View):
             'info': info
         }
         return render(request, 'webeducation/index.html', context)
+
+
+# class TaskSolvingView(View):
+#     def get(self):
+#         pass
+#
+#     def post(self):
+#         pass
 
 
 class SubjectTasksView(View):
@@ -77,14 +76,6 @@ class SubjectTasksView(View):
         context = {'subject': subject, 'tasks': tasks, 'courses': courses}
 
         return render(request, 'webeducation/subject_tasks.html', context)
-
-
-# def subject_teacher_tasks(request, subject_id, course_id):
-#     subject = get_object_or_404(Subject, id=subject_id)
-#     course = get_object_or_404(Course, id=course_id)
-#
-#     context = {'subject': subject, 'course': course}
-#     return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
 class SubjectTeacherTasksView(View):
@@ -122,19 +113,6 @@ def get_subjects(request):
         return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
     else:
         return render(request, 'webeducation/login.html')
-
-
-# @login_required
-# def add_subject_to_user(request):
-#     subjects = Subject.objects.all()
-#     if request.method == 'POST':
-#         subject_ids = request.POST.getlist('subject_id')
-#         for subject_id in subject_ids:
-#             subject = get_object_or_404(Subject, id=subject_id)
-#             add_subject(subject, request.user.username)
-#         return redirect('check_account')
-#     else:
-#         return render(request, 'webeducation/check_account.html', {'subjects': subjects})
 
 
 # @login_required

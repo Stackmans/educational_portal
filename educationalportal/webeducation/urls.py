@@ -18,22 +18,15 @@ urlpatterns = [
     # path('view_teachers/<slug:subject_name>', views.TeachersListView.as_view(), name='view_teachers'),
     path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
 
-    # path('account/requests', views.requests_info, name='requests'),
     path('account/requests', login_required(views.RequestsView.as_view()), name='requests'),
-
-
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('reject_request/<int:request_id>/', views.reject_request, name='reject_request'),
-
-    # path('add_subject_to_user/', views.add_subject_to_user, name='add_subject_to_user'),
     path('add_subject_to_user/', views.AddSubjectToUserView.as_view(), name='add_subject_to_user'),
-
-    # path('subject/<int:subject_id>/', views.subject_tasks, name='subject_tasks'),
     path('subject/<int:subject_id>/', login_required(views.SubjectTasksView.as_view()), name='subject_tasks'),
-
-    # path('subject/<int:subject_id>/<int:course_id>', views.subject_teacher_tasks, name='subject_teacher_tasks'),
     path('subject/<int:subject_id>/<int:course_id>', views.SubjectTeacherTasksView.as_view(), name='subject_teacher_tasks'),
+
+    # path('subject/<slug:subject_name>/task', views.TaskSolvingView.as_view(), name='task_solving'),
 
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),

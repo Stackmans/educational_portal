@@ -17,7 +17,8 @@
                 <ul>
                     {% for task in tasks %}
                         {% if task.course_num_id == user.student.course_id %}
-                            <li>{{ task.theme }}</li>
+                            <li><a href="{% url 'task_solving' subject_name=subject.name %}">{{ task.theme }}</a></li>
+
                             <p>{{ task.description }}</p>
                         {% endif %}
                     {% endfor %}

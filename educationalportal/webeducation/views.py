@@ -56,12 +56,13 @@ class IndexView(View):
         return render(request, 'webeducation/index.html', context)
 
 
-# class TaskSolvingView(View):
-#     def get(self):
-#         pass
-#
-#     def post(self):
-#         pass
+class TaskSolvingView(View):
+    def get(self, request, subject_name):
+        subject = get_object_or_404(Subject, name=subject_name)
+        return render(request, 'webeducation/task_solution.html')
+
+    def post(self, request):
+        return render(request, 'webeducation/task_solution.html')
 
 
 class SubjectTasksView(View):
@@ -146,11 +147,21 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
-@login_required
+# @login_required
+# def view_teachers(request, subject_name):
+#     subject = get_object_or_404(Subject, name=subject_name)
+#
+#     return render(request, 'webeducation/view_teachers.html', {'subject': subject})
+
+
 def view_teachers(request, subject_name):
     subject = get_object_or_404(Subject, name=subject_name)
+    student = request.user.student
 
-    return render(request, 'webeducation/view_teachers.html', {'subject': subject})
+    existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
+
+    context = {'subject': subject, 'existing_request': existing_request}
+    return render(request, 'webeducation/view_teachers.html', context)
 
 
 # class TeachersListView(View):  # what??
@@ -182,13 +193,6 @@ class SelectCourseView(View):
         student.course_id = course_id
         student.save()
         return redirect('check_account')
-
-
-# @login_required
-# def requests_info(request):
-#     requests = SubjectRequest.objects.filter(is_confirmed=False)
-#
-#     return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
 
 
 class RequestsView(View):

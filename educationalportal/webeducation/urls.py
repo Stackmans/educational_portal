@@ -26,7 +26,7 @@ urlpatterns = [
     path('subject/<int:subject_id>/', login_required(views.SubjectTasksView.as_view()), name='subject_tasks'),
     path('subject/<int:subject_id>/<int:course_id>', views.SubjectTeacherTasksView.as_view(), name='subject_teacher_tasks'),
 
-    # path('subject/<slug:subject_name>/task', views.TaskSolvingView.as_view(), name='task_solving'),
+    path('subject/<slug:subject_name>/task', views.TaskSolvingView.as_view(), name='task_solving'),
 
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),

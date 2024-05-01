@@ -147,6 +147,11 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
+class FindTeacherView(View):
+    def get(self, request):
+        return render(request, 'webeducation/find_teacher.html')
+
+
 # @login_required
 # def view_teachers(request, subject_name):
 #     subject = get_object_or_404(Subject, name=subject_name)

@@ -79,13 +79,15 @@
                     {% csrf_token %}
                     <input type="hidden" name="subject_id" value="{{ subject.id }}">
                     <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
-                    <button type="submit" class="btn btn-primary">Find teacher</button>
                     <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
                 </form>
             </div>
             {% endfor %}
             <h3><a> Another </a></h3>
+
             <a>Content</a>
+            <a href="{% url 'find_teacher' %}">Find teacher</a>
+
             {% endif %}
         {% else %}
         <p>Please log in to view subjects.</p>

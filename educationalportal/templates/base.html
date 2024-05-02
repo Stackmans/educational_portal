@@ -48,53 +48,62 @@
 
 
 <div class="col-md-2 left-section">
-<h2>
-{% block left_side_content %}
 
+{% block left_side_content %}
+    <div class="container">
         <h3>Subjects</h3>
         {% if user.is_authenticated %}
             {% if user.role == 'teacher' %}
-
-                {% for subject in user.teacher.subjects.all %}
-                    <div>
-                        <form method="POST" action="{% url 'delete_subject' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
-                            <button type="submit" class="btn btn-danger btn-sm">×</button>
-                        </form>
-                        <a href="{% url 'view_students' subject_id=subject.id %}" class="btn btn-outline-primary">View Students</a>
-                    </div>
-                {% endfor %}
-
-                <h3><a> Another </a></h3>
-                    <p><a href="{% url 'requests' %}">Requests</a></p>
-                    <p><a href="{% url 'add_task' %}">Add task</a></p>
-
-
+                <table class="table table-striped">
+                    <tbody>
+                        {% for subject in user.teacher.subjects.all %}
+                        <tr>
+                            <td><a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a></td>
+                            <td>
+                                <form method="POST" action="{% url 'delete_subject' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                                <a href="{% url 'view_students' subject_id=subject.id %}" class="btn btn-outline-primary btn-sm">View Students</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h3><a>Another</a></h3>
+                <p><a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a></p>
+                <p><a href="{% url 'add_task' %}" class="btn btn-outline-primary">Add Task</a></p>
             {% elif user.role == 'student' %}
-            {% for subject in user.student.subjects.all %}
-            <div>
-                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                    <a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a>
-                    <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">×</button>
-                </form>
-            </div>
-            {% endfor %}
-            <h3><a> Another </a></h3>
+                <table class="table table-striped">
 
-            <a>Content</a>
-            <a href="{% url 'find_teacher' %}">Find teacher</a>
-
+                    <tbody>
+                        {% for subject in user.student.subjects.all %}
+                        <tr>
+                            <td><a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a></td>
+                            <td>
+                                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h3><a>Another</a></h3>
+                <p><a>Content</a></p>
+                <a href="{% url 'find_teacher' %}" class="btn btn-primary">Find Teacher</a>
             {% endif %}
         {% else %}
-        <p>Please log in to view subjects.</p>
+            <p>Please log in to view subjects.</p>
         {% endif %}
-
+    </div>
 {% endblock %}
-</h2>
+
+
+
 </div>
 
 

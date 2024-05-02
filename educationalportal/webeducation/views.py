@@ -5,7 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm
+from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
+    CustomUserChangeForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
 from .utils import add_subject
 
@@ -29,13 +30,27 @@ class UploadPhotoView(View):
 
 class AccountInfo(View):
     def get(self, request):
-        courses = Course.objects.all()
         subjects = Subject.objects.all()
-        context = {'subjects': subjects, 'courses': courses}
+        context = {'subjects': subjects}
         return render(request, 'webeducation/account_info.html', context)
 
-    # def post(self, request):
-    #     pass  # nothing to do?
+
+class AccountEditView(View):
+    def get(self, request):
+        courses = Course.objects.all()
+        form = CustomUserChangeForm(instance=request.user)
+        context = {
+            'courses': courses,
+            'form': form
+        }
+        return render(request, 'webeducation/account_edit.html', context)
+
+    def post(self, request):
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('check_account')  # Перенаправлення на успішну сторінку
+        return render(request, 'webeducation/account_edit.html', {'form': form})
 
 
 class StudentsList(View):
@@ -116,7 +131,6 @@ def get_subjects(request):
         return render(request, 'webeducation/login.html')
 
 
-# @login_required
 class AddSubjectToUserView(View):
     # def get(self, request):
     #     subjects = Subject.objects.all()
@@ -150,13 +164,6 @@ class DeleteSubjectView(View):
 class FindTeacherView(View):
     def get(self, request):
         return render(request, 'webeducation/find_teacher.html')
-
-
-# @login_required
-# def view_teachers(request, subject_name):
-#     subject = get_object_or_404(Subject, name=subject_name)
-#
-#     return render(request, 'webeducation/view_teachers.html', {'subject': subject})
 
 
 def view_teachers(request, subject_name):

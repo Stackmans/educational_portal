@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main_content %}
+
+{% if user.student %}
+    <h1>Select Course</h1>
+        <form method="post" action="{% url 'select_course' %}">
+            {% csrf_token %}
+            <select name="course_id">
+                {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.course_number }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Save Course</button>
+        </form>
+{% endif %}
+
+<h1>Edit Account Details</h1>
+<form method="post" action="{% url 'edit_account' %}">
+    {% csrf_token %}
+    <ul>
+        <li>
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="{{ user.email }}">
+            <button type="submit" name="update_email">Update Email</button>
+        </li>
+        <li>
+            <label for="password">Password:</label>
+            <input type="password" name="password">
+            <button type="submit" name="update_password">Update Password</button>
+        </li>
+        <li>
+            <label for="first_name">First Name:</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}">
+            <button type="submit" name="update_first_name">Update First Name</button>
+        </li>
+        <li>
+            <label for="last_name">Last Name:</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}">
+            <button type="submit" name="update_last_name">Update Last Name</button>
+        </li>
+    </ul>
+</form>
+
+<h1>Delete account</h1>
+    <form method="post" action="{% url 'delete_account' %}">
+        {% csrf_token %}
+
+        <button type="submit">Delete account</button>
+    </form>
+
+{% endblock %}

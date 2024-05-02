@@ -6,49 +6,53 @@
 
 {% if user.student %}
     <h1>Select Course</h1>
-        <form method="post" action="{% url 'select_course' %}">
-            {% csrf_token %}
-            <select name="course_id">
+    <form method="post" action="{% url 'select_course' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <select class="form-control" name="course_id">
                 {% for course in courses %}
-                <option value="{{ course.id }}">{{ course.course_number }}</option>
+                    <option value="{{ course.id }}">{{ course.course_number }}</option>
                 {% endfor %}
             </select>
-            <button type="submit">Save Course</button>
-        </form>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Course</button>
+    </form>
 {% endif %}
 
 <h1>Edit Account Details</h1>
 <form method="post" action="{% url 'edit_account' %}">
     {% csrf_token %}
-    <ul>
-        <li>
+    <ul class="list-unstyled">
+        <li class="form-group">
             <label for="email">Email:</label>
-            <input type="email" name="email" value="{{ user.email }}">
-            <button type="submit" name="update_email">Update Email</button>
+            <input type="email" class="form-control" name="email" value="{{ user.email }}">
+
         </li>
-        <li>
+        <li class="form-group">
             <label for="password">Password:</label>
-            <input type="password" name="password">
-            <button type="submit" name="update_password">Update Password</button>
+            <input type="password" class="form-control" name="password">
+
         </li>
-        <li>
+        <li class="form-group">
             <label for="first_name">First Name:</label>
-            <input type="text" name="first_name" value="{{ user.first_name }}">
-            <button type="submit" name="update_first_name">Update First Name</button>
+            <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+
+        </li>
+        <li class="form-group">
+            <label for="last_name">Last Name:</label>
+            <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+
         </li>
         <li>
-            <label for="last_name">Last Name:</label>
-            <input type="text" name="last_name" value="{{ user.last_name }}">
-            <button type="submit" name="update_last_name">Update Last Name</button>
+        <button type="submit" class="btn btn-primary" name="update_last_name">Update all info</button>
         </li>
     </ul>
 </form>
 
 <h1>Delete account</h1>
-    <form method="post" action="{% url 'delete_account' %}">
-        {% csrf_token %}
-
-        <button type="submit">Delete account</button>
-    </form>
+<form method="post" action="{% url 'delete_account' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete account</button>
+</form>
 
 {% endblock %}

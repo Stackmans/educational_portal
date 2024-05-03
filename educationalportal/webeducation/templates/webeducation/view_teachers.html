@@ -1,26 +1,25 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main_content %}
-    {% if user.role == 'student' %}
+    <div class="container">
         <h1>Teachers</h1>
-        <ul>
-            {% for teacher in subject.teacher_set.all %}
-                <li>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>{{ teacher.user.first_name }} {{ teacher.user.last_name }}</span>
+        <table class="table table-striped">
+            <tbody>
+                {% for teacher in subject.teacher_set.all %}
+                <tr>
+                    <td>{{ teacher.user.first_name }} {{ teacher.user.last_name }}</td>
+                    <td>
                         <form method="POST" action="{% url 'send_request' %}">
                             {% csrf_token %}
                             <input type="hidden" name="teacher_id" value="{{ teacher.id }}">
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                            <button type="submit" class="btn btn-primary">Send Request</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Send Request</button>
                         </form>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% elif user.role == 'teacher' %}
-        <h1>Error</h1>
-    {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -3,14 +3,25 @@
 
 
 {% block main_content %}
-    <h1>Students who learn {{ subject.name }}</h1>
-    <ul>
-        {% for request in subject.subjectrequest_set.all %}
-            {% if request.is_confirmed %}
-                <li>{{ request.student.user.first_name }} {{ request.student.user.last_name }}</li>
-            {% endif %}
-        {% empty %}
-            <li>No students found for this subject</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>Students who learn {{ subject.name }}</h1>
+        <table class="table table-striped">
+            <tbody>
+                {% for request in subject.subjectrequest_set.all %}
+                    {% if request.is_confirmed %}
+                        <tr>
+                            <td>{{ request.student.user.first_name }} {{ request.student.user.last_name }}</td>
+                            <td>
+                                <!-- Якщо ви хочете додати кнопки аналогічно викладачам, можете вставити форму тут -->
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="2">No students found for this subject</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

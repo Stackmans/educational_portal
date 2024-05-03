@@ -1,19 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main_content %}
+    <div class="container">
+        <h1>{{ subject.name }} Tasks</h1>
 
-    <h1>{{ subject.name }} Tasks</h1>
-
-    <h2>Tasks for Course {{ course.course_number }}</h2>
-    <ul>
-        {% for task in course.task_set.all %}
-            {% if task.subject_id == subject.id %}
-                <li>{{ task.theme }}</li>
-                <p>{{ task.description }}</p>
-            {% endif %}
-        {% endfor %}
-    </ul>
-
+        <div class="card">
+            <div class="card-body" style="background-color: #b59a7a;">
+                <h2 class="card-title">Tasks for Course {{ course.course_number }}</h2>
+                <ul class="list-group">
+                    {% for task in course.task_set.all %}
+                        {% if task.subject_id == subject.id %}
+                            <li class="list-group-item" style="background-color: #b59a7a;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>{{ task.theme }}</span>
+                                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#task{{ task.id }}">Details</button>
+                                </div>
+                                <div id="task{{ task.id }}" class="collapse">
+                                    <p>{{ task.description }}</p>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -2,18 +2,22 @@
 {% load static %}
 
 {% block main_content %}
-
-{% for subject in user.student.subjects.all %}
-
-    <div>
-        <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
-            {% csrf_token %}
-            <input type="hidden" name="subject_id" value="{{ subject.id }}">
-            <a>{{ subject.name }}</a>
-            <button type="submit" class="btn btn-primary">Find teacher</button>
-        </form>
+    <div class="container">
+        <div class="row">
+            {% for subject in user.student.subjects.all %}
+                <div class="col-md-4 mb-3">
+                    <div class="card" style="background-color: #b59a7a;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ subject.name }}</h5>
+                            <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                <button type="submit" class="btn btn-primary">Find teacher</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-
-{% endfor %}
-
 {% endblock %}

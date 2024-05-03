@@ -1,33 +1,51 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main_content %}
-    <h1>{{ subject.name }} Tasks</h1>
+    <style>
+        .task-item {
+            background-color: #b59a7a;
+            margin-bottom: 10px; /* Доданий відступ між елементами */
+            padding: 10px; /* Доданий відступ всередині кожного елемента */
+        }
+    </style>
 
-    {% if user.is_authenticated %}
-        {% if user.role == 'teacher' %}
-            <p>info about teacher.</p>
-            {% for course in courses %}
-                <p><a href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
-            {% endfor %}
-        {% elif user.role == 'student' %}
-            {% if user.student.course %}
-                <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
-                <ul>
-                    {% for task in tasks %}
-                        {% if task.course_num_id == user.student.course_id %}
-                            <li><a href="{% url 'task_solving' subject_name=subject.name %}">{{ task.theme }}</a></li>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ subject.name }} Tasks</h1>
 
-                            <p>{{ task.description }}</p>
+                {% if user.is_authenticated %}
+                    {% if user.role == 'teacher' %}
+
+                        {% for course in courses %}
+                            <p><a class="btn btn-primary" href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
+                        {% endfor %}
+                    {% elif user.role == 'student' %}
+                        {% if user.student.course %}
+                            <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
+                            <ul class="list-group">
+                                {% for task in tasks %}
+                                    {% if task.course_num_id == user.student.course_id %}
+                                        <li class="list-group-item task-item">
+                                            <a href="{% url 'task_solving' subject_name=subject.name %}">{{ task.theme }}</a>
+                                            <p>{{ task.description }}</p>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="alert alert-warning" role="alert">
+                                Choose course to check tasks.
+                            </div>
                         {% endif %}
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Choose course to check tasks.</p>
-            {% endif %}
-        {% endif %}
-    {% else %}
-        <p>Please log in to check tasks.</p>
-    {% endif %}
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        Please log in to check tasks.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

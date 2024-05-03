@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main_content %}
-{% for request in requests %}
-    <div>
-        <p>From: {{ request.student.user.first_name }} {{ request.student.user.last_name }}</p>
-        <p>Subject: {{ request.subject.name }}</p>
-        <form method="POST" action="{% url 'confirm_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Confirm</button>
-        </form>
-        <form method="POST" action="{% url 'reject_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Reject</button>
-        </form>
+    <div class="container">
+        <h2>Requests</h2>
+        {% for request in requests %}
+            <div class="container" style="background-color: #b59a7a; border-radius: 10px;">
+                <div class="card-body">
+                    <p class="card-text"><strong>From:</strong> {{ request.student.user.first_name }} {{ request.student.user.last_name }}</p>
+                    <p class="card-text"><strong>Subject:</strong> {{ request.subject.name }}</p>
+                    <div class="btn-group" role="group" aria-label="Request Actions">
+                        <form method="POST" action="{% url 'confirm_request' request.id %}" class="mr-1">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Confirm</button>
+                        </form>
+                        <form method="POST" action="{% url 'reject_request' request.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-{% endfor %}
 {% endblock %}

@@ -60,3 +60,13 @@ class SubjectRequest(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_requests')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     is_confirmed = models.BooleanField(default=False)
+
+
+class TaskSolution(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='task_solutions')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='task_solutions')
+    solution_text = models.TextField()  # Замість solution, щоб уникнути конфлікту з методом
+    solution_file = models.FileField(upload_to='task_solutions/%Y/%m/%d/')
+
+    def __str__(self):
+        return f"Task Solution for {self.subject.name} by {self.student.user.username}"

@@ -56,3 +56,4 @@ class TaskSolutionForm(forms.ModelForm):
     class Meta:
         model = TaskSolution
         fields = ['solution_text', 'solution_file']
+

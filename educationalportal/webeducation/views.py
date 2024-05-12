@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
-    CustomUserChangeForm
+    CustomUserChangeForm, TaskSolutionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
 from .utils import add_subject
 
@@ -71,13 +71,26 @@ class IndexView(View):
         return render(request, 'webeducation/index.html', context)
 
 
+# try to create decorator to check for a student
 class TaskSolvingView(View):
     def get(self, request, subject_name):
+        form = TaskSolutionForm()
         subject = get_object_or_404(Subject, name=subject_name)
-        return render(request, 'webeducation/task_solution.html')
+        context = {'subject': subject, 'form': form}
+        return render(request, 'webeducation/task_solution.html', context)
 
-    def post(self, request):
-        return render(request, 'webeducation/task_solution.html')
+    def post(self, request, subject_name):
+        form = TaskSolutionForm(request.POST, request.FILES)
+        subject = get_object_or_404(Subject, name=subject_name)
+        context = {'subject': subject, 'form': form}
+# commit=False зберігає форму але не зберігає в базі даних, щоб ви могли додати додаткову інформацію перед збереженням
+        if form.is_valid():
+            solution = form.save(commit=False)
+            solution.subject = subject
+            solution.student = request.user.student
+            solution.save()
+            return redirect('home')
+        return render(request, 'webeducation/task_solution.html', context)
 
 
 class SubjectTasksView(View):

@@ -65,8 +65,8 @@ class SubjectRequest(models.Model):
 class TaskSolution(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='task_solutions')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='task_solutions')
-    solution_text = models.TextField()  # Замість solution, щоб уникнути конфлікту з методом
-    solution_file = models.FileField(upload_to='task_solutions/%Y/%m/%d/')
+    solution_text = models.TextField(blank=True, null=True)
+    solution_file = models.FileField(upload_to='task_solutions/%Y/%m/%d/', blank=True, null=True)
 
-    def __str__(self):
-        return f"Task Solution for {self.subject.name} by {self.student.user.username}"
+    # def __str__(self):
+    #     return f"Task Solution for {self.subject.name} by {self.student.user.username}"

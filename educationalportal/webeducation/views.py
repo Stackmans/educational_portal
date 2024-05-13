@@ -73,23 +73,30 @@ class IndexView(View):
 
 # try to create decorator to check for a student
 class TaskSolvingView(View):
-    def get(self, request, subject_name):
+    def get(self, request, subject_name, task_id):
         form = TaskSolutionForm()
         subject = get_object_or_404(Subject, name=subject_name)
-        context = {'subject': subject, 'form': form}
+        task = get_object_or_404(Task, id=task_id)
+        context = {'subject': subject, 'form': form, 'task': task}
         return render(request, 'webeducation/task_solution.html', context)
 
-    def post(self, request, subject_name):
+    def post(self, request, subject_name, task_id):
         form = TaskSolutionForm(request.POST, request.FILES)
         subject = get_object_or_404(Subject, name=subject_name)
-        context = {'subject': subject, 'form': form}
+        task = get_object_or_404(Task, id=task_id)
+        context = {'subject': subject, 'form': form, 'task': task}
 # commit=False зберігає форму але не зберігає в базі даних, щоб ви могли додати додаткову інформацію перед збереженням
         if form.is_valid():
             solution = form.save(commit=False)
             solution.subject = subject
             solution.student = request.user.student
+            solution.task_id = task_id
+            if not solution.solution_text and not solution.solution_file:
+                messages.error(request, 'You can not save solution with no info.')
+                return redirect('check_account')
             solution.save()
-            return redirect('home')
+            messages.success(request, 'Solution saved successfully.')
+            return redirect('check_account')
         return render(request, 'webeducation/task_solution.html', context)
 
 

@@ -28,7 +28,7 @@
                                 {% for task in tasks %}
                                     {% if task.course_num_id == user.student.course_id %}
                                         <li class="list-group-item task-item">
-                                            <a href="{% url 'task_solving' subject_name=subject.name %}">{{ task.theme }}</a>
+                                            <a href="{% url 'task_solving' subject_name=subject.name task_id=task.id %}">{{ task.theme }}</a>
                                             <p>{{ task.description }}</p>
                                         </li>
                                     {% endif %}

@@ -23,6 +23,9 @@ class Task(models.Model):
     description = models.TextField()
     course_num = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.subject.name} - {self.theme}"
+
 
 class CustomUser(AbstractUser):
     # CHOICES = (
@@ -65,8 +68,9 @@ class SubjectRequest(models.Model):
 class TaskSolution(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='task_solutions')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='task_solutions')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_solutions')  # , blank=True, null=True
     solution_text = models.TextField(blank=True, null=True)
     solution_file = models.FileField(upload_to='task_solutions/%Y/%m/%d/', blank=True, null=True)
 
-    # def __str__(self):
-    #     return f"Task Solution for {self.subject.name} by {self.student.user.username}"
+    def __str__(self):
+        return f"Task Solution for {self.task.theme} by {self.student.user.username}"

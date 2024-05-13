@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
     CustomUserChangeForm, TaskSolutionForm
-from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task
+from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution
 from .utils import add_subject
 
 info = {
@@ -77,15 +77,22 @@ class TaskSolvingView(View):
         form = TaskSolutionForm()
         subject = get_object_or_404(Subject, name=subject_name)
         task = get_object_or_404(Task, id=task_id)
-        context = {'subject': subject, 'form': form, 'task': task}
+
+        # Перевірка, чи вже була відправлена відповідь для цього завдання та студента
+        solution_submitted = TaskSolution.objects.filter(student=request.user.student, task=task).exists()
+
+        context = {'subject': subject, 'form': form, 'task': task, 'solution_submitted': solution_submitted}
         return render(request, 'webeducation/task_solution.html', context)
 
     def post(self, request, subject_name, task_id):
         form = TaskSolutionForm(request.POST, request.FILES)
         subject = get_object_or_404(Subject, name=subject_name)
         task = get_object_or_404(Task, id=task_id)
-        context = {'subject': subject, 'form': form, 'task': task}
-# commit=False зберігає форму але не зберігає в базі даних, щоб ви могли додати додаткову інформацію перед збереженням
+
+        # Перевірка, чи вже була відправлена відповідь для цього завдання та студента
+        solution_submitted = TaskSolution.objects.filter(student=request.user.student, task=task).exists()
+
+        context = {'subject': subject, 'form': form, 'task': task, 'solution_submitted': solution_submitted}
         if form.is_valid():
             solution = form.save(commit=False)
             solution.subject = subject

@@ -7,14 +7,20 @@
     <div class="col-md-6 offset-md-3">
       <h2 class="mb-4">{{ subject }}</h2>
 
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <div class="form-group mt-3">
-          <button type="submit" class="btn btn-primary">Save solution</button>
+      {% if solution_submitted %}
+        <div class="alert alert-success" role="alert">
+          You have already submitted a solution for this task.
         </div>
-      </form>
+      {% else %}
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+
+          <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Save solution</button>
+          </div>
+        </form>
+      {% endif %}
     </div>
   </div>
 </div>

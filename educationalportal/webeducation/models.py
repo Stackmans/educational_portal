@@ -68,9 +68,19 @@ class SubjectRequest(models.Model):
 class TaskSolution(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='task_solutions')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='task_solutions')
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_solutions')  # , blank=True, null=True
-    solution_text = models.TextField(blank=True, null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_solutions')
+    solution_text = models.TextField(max_length=4000, blank=True, null=True)
     solution_file = models.FileField(upload_to='task_solutions/%Y/%m/%d/', blank=True, null=True)
 
     def __str__(self):
         return f"Task Solution for {self.task.theme} by {self.student.user.username}"
+
+
+# class StudentSubjectPoints(models.Model):
+#     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+#     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+#     task = models.ForeignKey(Task, on_delete=models.CASCADE)  # Додано поле для відслідковування завдань
+#     points = models.IntegerField(default=0)
+#
+#     def __str__(self):
+#         return f"{self.student.user.username} - {self.subject.name} - Task: {self.task.theme} - Points: {self.points}"

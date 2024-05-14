@@ -80,7 +80,7 @@ class TaskSolution(models.Model):
 #     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 #     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 #     task = models.ForeignKey(Task, on_delete=models.CASCADE)  # Додано поле для відслідковування завдань
-#     points = models.IntegerField(default=0)
+#     points = models.IntegerField(default=None)
 #
 #     def __str__(self):
 #         return f"{self.student.user.username} - {self.subject.name} - Task: {self.task.theme} - Points: {self.points}"

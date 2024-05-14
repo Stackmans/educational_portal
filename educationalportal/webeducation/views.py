@@ -140,7 +140,7 @@ class AddTaskView(View):
         if form.is_valid():
             task = form.save()
             task.save()
-            return redirect('home')
+            return redirect('check_account')
 
         return render(request, 'webeducation/add_task.html', {'form': form})
 
@@ -269,7 +269,7 @@ class SendRequestView(View):
             SubjectRequest.objects.create(student=student, teacher_id=teacher_id, subject_id=subject_id)
             messages.success(request, 'Запит надіслано успішно!')
 
-        return redirect('home')
+        return redirect('check_account')
 
 
 # ---------------------- User methods ----------------------
@@ -301,7 +301,7 @@ class RegisterView(View):
             login(request, user)
 
             messages.success(request, 'Ви успішно зареєструвалися!')
-            return redirect('home')
+            return redirect('check_account')
         else:
             messages.error(request, 'Будь ласка, виправте помилки у формі.')
             return render(request, 'webeducation/register.html', {'form': form})
@@ -320,7 +320,7 @@ class LoginView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('check_account')
             else:
                 messages.error(request, 'Неправильний логін або пароль.')
         return render(request, 'webeducation/login.html', {'form': form})

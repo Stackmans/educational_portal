@@ -130,6 +130,33 @@ class SubjectTeacherTasksView(View):
         return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
+class SolutionsView(View):
+    def get(self, request, subject_name, task_id):
+        task = get_object_or_404(Task, id=task_id)
+        subject = get_object_or_404(Subject, name=subject_name)
+
+        context = {'task': task, 'subject': subject}
+        return render(request, 'webeducation/view_solutions.html', context)
+
+
+class CheckSolutionView(View):
+    def get(self, request, task_id, solution_id):
+        solution = get_object_or_404(TaskSolution, id=solution_id)
+        task = get_object_or_404(Task, id=task_id)
+        solutions = TaskSolution.objects.filter(task=task)
+
+        context = {'task': task, 'solutions': solutions, 'solution': solution}
+        return render(request, 'webeducation/view_solution.html', context)
+
+    def post(self, request, task_id, solution_id):
+        solution = get_object_or_404(TaskSolution, id=solution_id)
+        task = get_object_or_404(Task, id=task_id)
+        solutions = TaskSolution.objects.filter(task=task)
+
+        context = {'task': task, 'solutions': solutions, 'solution': solution}
+        return render(request, 'webeducation/view_solution.html', context)
+
+
 class AddTaskView(View):
     def get(self, request):
         form = AddTaskForm()

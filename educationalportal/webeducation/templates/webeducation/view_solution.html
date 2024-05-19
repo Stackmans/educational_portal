@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+    <meta charset="UTF-8">
+    <div class="container">
+        <h1>{{ task.theme }}</h1>
+        <p>{{ task.description }}</p>
+
+        <h2>Solution</h2>
+        <ul>
+            {% for solution in solutions %}
+                <li>
+                    <h3>{{ solution.student.user.first_name }} {{ solution.student.user.last_name }}</h3>
+                    <p>{{ solution.solution_text }}</p>
+                    {% if solution.solution_file %}
+                        <a meta charset="utf-8"> href="{{ solution.solution_file }}">Download Solution File</a>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>No solutions found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

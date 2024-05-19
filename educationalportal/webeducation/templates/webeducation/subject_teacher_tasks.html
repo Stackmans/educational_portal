@@ -14,7 +14,10 @@
                             <li class="list-group-item" style="background-color: #b59a7a;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <span>{{ task.theme }}</span>
-                                    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#task{{ task.id }}">Details</button>
+                                    <div>
+                                        <a href="{% url 'check_solutions' task_id=task.id subject_name=subject.name %}" class="btn btn-primary">Check Solutions</a>
+                                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#task{{ task.id }}">Details</button>
+                                    </div>
                                 </div>
                                 <div id="task{{ task.id }}" class="collapse">
                                     <p>{{ task.description }}</p>

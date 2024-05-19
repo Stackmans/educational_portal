@@ -7,7 +7,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='home'),
-
     path('register', views.RegisterView.as_view(), name='register'),
     path('login', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
@@ -25,8 +24,10 @@ urlpatterns = [
     path('add_subject_to_user/', views.AddSubjectToUserView.as_view(), name='add_subject_to_user'),
     path('subject/<int:subject_id>/', login_required(views.SubjectTasksView.as_view()), name='subject_tasks'),
     path('subject/<int:subject_id>/<int:course_id>', views.SubjectTeacherTasksView.as_view(), name='subject_teacher_tasks'),
-
     path('subject/<slug:subject_name>/task/<int:task_id>/', views.TaskSolvingView.as_view(), name='task_solving'),
+
+    path('<slug:subject_name>/task/<int:task_id>/solutions/', views.SolutionsView.as_view(), name='check_solutions'),
+    path('check_solution/<int:task_id>/<int:solution_id>/', views.CheckSolutionView.as_view(), name='check_solution'),
 
     path('find_teacher/', views.FindTeacherView.as_view(), name='find_teacher'),
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),

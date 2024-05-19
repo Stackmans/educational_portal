@@ -2,24 +2,27 @@
 {% load static %}
 
 {% block main_content %}
-    <meta charset="UTF-8">
-    <div class="container">
-        <h1>{{ task.theme }}</h1>
-        <p>{{ task.description }}</p>
+<div class="container">
+    <h1 class="mt-5">{{ task.theme }}</h1>
+    <p>{{ task.description }}</p>
 
-        <h2>Solution by {{ solution.student.user.first_name }} {{ solution.student.user.last_name }}</h2>
-        <ul>
-            {% for solution in solutions %}
-                <li>
+    <div class="card">
+        <div class="card-body" style="background-color: #b59a7a;">
+            <h2 class="card-title">Solution by {{ solution.student.user.first_name }} {{ solution.student.user.last_name }}</h2>
+            <ul class="list-group list-group-flush">
+                {% for solution in solutions %}
+                <li class="list-group-item" style="background-color: #b59a7a;">
                     <p>{{ solution.solution_text }}</p>
 
                     {% if solution.solution_file %}
-                        <a href="{{ solution.solution_file.url }}">Download Solution File</a>
+                    <a href="{{ solution.solution_file.url }}" class="btn btn-primary">Download Solution File</a>
                     {% endif %}
                 </li>
-            {% empty %}
-                <li>No solutions found.</li>
-            {% endfor %}
-        </ul>
+                {% empty %}
+                <li class="list-group-item">No solutions found.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
+</div>
 {% endblock %}

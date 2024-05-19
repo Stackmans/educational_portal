@@ -2,17 +2,16 @@
 {% load static %}
 
 {% block main_content %}
-    <div class="container">
-        <h1>{{ subject.name }} Solutions</h1>
-        <h2>{{ task.theme }}</h2>
+<div class="container">
+    <h1 class="mt-5">{{ subject.name }} Solutions</h1>
+    <h2 class="mb-4">{{ task.theme }}</h2>
 
-        <ul>
-            {% for solution in task.task_solutions.all %}
-                <li>
-                    <h2>{{ solution.student.user.first_name }} {{ solution.student.user.last_name }} solution</h2>
-                    {% if solution.solution_text %}
-                        <p>{{ solution.solution_text }}</p>
-                    {% endif %}
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="list-group">
+                {% for solution in task.task_solutions.all %}
+                <li class="list-group-item" style="background-color: #b59a7a;">
+                    <h4>{{ solution.student.user.first_name }} {{ solution.student.user.last_name }} solution</h4>
 
                     <form action="{% url 'check_solution' solution_id=solution.id task_id=task.id %}" method="POST">
                         {% csrf_token %}
@@ -20,9 +19,11 @@
                         <button type="submit" class="btn btn-primary">Check Solution</button>
                     </form>
                 </li>
-            {% empty %}
-                <li>Для цього завдання не знайдено рішень.</li>
-            {% endfor %}
-        </ul>
+                {% empty %}
+                <li class="list-group-item">Для цього завдання не знайдено рішень.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
+</div>
 {% endblock %}

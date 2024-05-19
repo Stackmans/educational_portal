@@ -9,13 +9,11 @@
         <ul>
             {% for solution in task.task_solutions.all %}
                 <li>
-                    <p>{{ solution.student.user.username }}:</p>
+                    <h2>{{ solution.student.user.first_name }} {{ solution.student.user.last_name }} solution</h2>
                     {% if solution.solution_text %}
                         <p>{{ solution.solution_text }}</p>
                     {% endif %}
-                    {% if solution.solution_file %}
-                        <a href="{{ solution.solution_file.url }}">Download Solution File</a>
-                    {% endif %}
+
                     <form action="{% url 'check_solution' solution_id=solution.id task_id=task.id %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="task_id" value="{{ task.id }}">

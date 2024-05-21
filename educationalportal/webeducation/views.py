@@ -291,10 +291,10 @@ class SendRequestView(View):
 
         existing_request = SubjectRequest.objects.filter(student=student, teacher_id=teacher_id, subject_id=subject_id).first()
         if existing_request:
-            messages.warning(request, 'Ви вже відправили запит цьому викладачу для цього предмета.')
+            messages.warning(request, 'You have already sent a request to this teacher for this subject.')
         else:
             SubjectRequest.objects.create(student=student, teacher_id=teacher_id, subject_id=subject_id)
-            messages.success(request, 'Запит надіслано успішно!')
+            messages.success(request, 'Request sent successfully!')
 
         return redirect('check_account')
 

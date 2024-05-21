@@ -17,6 +17,10 @@
                         </div>
                     </div>
                 </div>
+            {% empty %}
+                <div class="col-12 d-flex justify-content-center align-items-center" style="background-color: #b59a7a; height: 200px;">
+                    <p class="text-center">No subjects found. Please <a href="{% url 'check_account' %}">add subjects</a>.</p>
+                </div>
             {% endfor %}
         </div>
     </div>

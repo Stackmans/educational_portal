@@ -52,6 +52,10 @@
 <h1>Delete account</h1>
 <form method="post" action="{% url 'delete_account' %}">
     {% csrf_token %}
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="confirm_delete" name="confirm_delete">
+        <label class="form-check-label" for="confirm_delete">Confirm deletion</label>
+    </div>
     <button type="submit" class="btn btn-danger">Delete account</button>
 </form>
 

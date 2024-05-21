@@ -22,7 +22,7 @@ class RegisterUserForm(UserCreationForm):
 
 
 class DeleteAccountForm(forms.Form):
-    confirm_delete = forms.BooleanField(label='Підтверджую, що хочу видалити свій аккаунт', required=True)
+    confirm_delete = forms.BooleanField(required=True, label='Confirm deletion')
 
 
 class SubjectDisplayForm(forms.Form):

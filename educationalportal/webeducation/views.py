@@ -330,7 +330,6 @@ class RegisterView(View):
             messages.success(request, 'Ви успішно зареєструвалися!')
             return redirect('check_account')
         else:
-            messages.error(request, 'Будь ласка, виправте помилки у формі.')
             return render(request, 'webeducation/register.html', {'form': form})
 
 
@@ -351,6 +350,21 @@ class LoginView(View):
             else:
                 messages.error(request, 'Неправильний логін або пароль.')
         return render(request, 'webeducation/login.html', {'form': form})
+
+
+# @method_decorator(login_required, name='dispatch')
+# class DeleteAccount(View):
+#     def get(self, request):
+#         form = DeleteAccountForm()
+#         return render(request, 'webeducation/account_info.html', {'form': form})
+#
+#     def post(self, request):
+#         form = DeleteAccountForm(request.POST)
+#         if form.is_valid() and form.cleaned_data['confirm_delete']:
+#             request.user.delete()
+#             return redirect('home')
+#         else:
+#             return render(request, 'webeducation/account_info.html', {'form': form})
 
 
 @method_decorator(login_required, name='dispatch')

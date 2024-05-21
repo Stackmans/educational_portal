@@ -17,7 +17,7 @@ urlpatterns = [
     # path('view_teachers/<slug:subject_name>', views.TeachersListView.as_view(), name='view_teachers'),
     path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
 
-    path('account/requests', login_required(views.RequestsView.as_view()), name='requests'),
+    path('requests', login_required(views.RequestsView.as_view()), name='requests'),
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('reject_request/<int:request_id>/', views.reject_request, name='reject_request'),
@@ -25,7 +25,6 @@ urlpatterns = [
     path('subject/<int:subject_id>/', login_required(views.SubjectTasksView.as_view()), name='subject_tasks'),
     path('subject/<int:subject_id>/<int:course_id>', views.SubjectTeacherTasksView.as_view(), name='subject_teacher_tasks'),
     path('subject/<slug:subject_name>/task/<int:task_id>/', views.TaskSolvingView.as_view(), name='task_solving'),
-
     path('<slug:subject_name>/task/<int:task_id>/solutions/', views.SolutionsView.as_view(), name='check_solutions'),
     path('check_solution/<int:task_id>/<int:solution_id>/', views.CheckSolutionView.as_view(), name='check_solution'),
 

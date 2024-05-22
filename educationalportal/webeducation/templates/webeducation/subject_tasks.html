@@ -24,7 +24,7 @@
                     {% elif user.role == 'student' %}
                         {% if not has_teacher %}
                             <div class="alert alert-warning" role="alert">
-                                Find teacher to check tasks.
+                                <a href="{% url 'find_teacher' %}">Find teacher</a> to check tasks.
                             </div>
                         {% else %}
                             {% if user.student.course %}

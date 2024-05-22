@@ -107,17 +107,45 @@ class TaskSolvingView(View):
         return render(request, 'webeducation/task_solution.html', context)
 
 
+# class SubjectTasksView(View):
+#     def get(self, request, subject_id):
+#         subject = get_object_or_404(Subject, id=subject_id)
+#         tasks = Task.objects.filter(subject=subject)
+#         courses = Course.objects.all()
+#
+#         if request.user.role == 'student' and request.user.student.course:
+#             tasks = tasks.filter(course_num=request.user.student.course)
+#
+#         context = {'subject': subject, 'tasks': tasks, 'courses': courses}
+#
+#         return render(request, 'webeducation/subject_tasks.html', context)
+
+
 class SubjectTasksView(View):
     def get(self, request, subject_id):
         subject = get_object_or_404(Subject, id=subject_id)
         tasks = Task.objects.filter(subject=subject)
         courses = Course.objects.all()
+        user = request.user
 
-        if request.user.role == 'student' and request.user.student.course:
-            tasks = tasks.filter(course_num=request.user.student.course)
+        has_teacher = False
+        if user.role == 'student':
+            # Перевірка наявності підтвердженого запиту у студента для викладача з даного предмета
+            has_teacher = SubjectRequest.objects.filter(
+                student=user.student,
+                subject=subject,
+                is_confirmed=True
+            ).exists()
 
-        context = {'subject': subject, 'tasks': tasks, 'courses': courses}
+            if user.student.course:
+                tasks = tasks.filter(course_num=user.student.course)
 
+        context = {
+            'subject': subject,
+            'tasks': tasks,
+            'courses': courses,
+            'has_teacher': has_teacher,
+        }
         return render(request, 'webeducation/subject_tasks.html', context)
 
 

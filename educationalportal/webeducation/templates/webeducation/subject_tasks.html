@@ -22,22 +22,28 @@
                             <p><a class="btn btn-primary" href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
                         {% endfor %}
                     {% elif user.role == 'student' %}
-                        {% if user.student.course %}
-                            <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
-                            <ul class="list-group">
-                                {% for task in tasks %}
-                                    {% if task.course_num_id == user.student.course_id %}
-                                        <li class="list-group-item task-item">
-                                            <a href="{% url 'task_solving' subject_name=subject.name task_id=task.id %}">{{ task.theme }}</a>
-                                            <p>{{ task.description }}</p>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% else %}
+                        {% if not has_teacher %}
                             <div class="alert alert-warning" role="alert">
-                                <a href="{% url 'edit_account' %}">Choose course</a> to check tasks.
+                                Find teacher to check tasks.
                             </div>
+                        {% else %}
+                            {% if user.student.course %}
+                                <h2>Tasks for Course {{ user.student.course.course_number }}</h2>
+                                <ul class="list-group">
+                                    {% for task in tasks %}
+                                        {% if task.course_num_id == user.student.course_id %}
+                                            <li class="list-group-item task-item">
+                                                <a href="{% url 'task_solving' subject_name=subject.name task_id=task.id %}">{{ task.theme }}</a>
+                                                <p>{{ task.description }}</p>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning" role="alert">
+                                    <a href="{% url 'edit_account' %}">Choose course</a> to check tasks.
+                                </div>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 {% else %}

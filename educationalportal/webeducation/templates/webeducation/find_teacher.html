@@ -8,12 +8,16 @@
                 <div class="col-md-4 mb-3">
                     <div class="card" style="background-color: #b59a7a;">
                         <div class="card-body">
-                            <h5 class="card-title">{{ subject.name }}</h5>
-                            <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                                <button type="submit" class="btn btn-primary">Find teacher</button>
-                            </form>
+                            <h4 class="card-title">{{ subject.name }}</h4>
+                            {% if subject.id in subjects_with_teacher %}
+                                <h6><p>You already have a teacher or sent request</p></h6>
+                            {% else %}
+                                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
+                                    <button type="submit" class="btn btn-primary">Find teacher</button>
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

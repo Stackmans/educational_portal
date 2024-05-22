@@ -243,9 +243,25 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
+# class FindTeacherView(View):
+#     def get(self, request):
+#         return render(request, 'webeducation/find_teacher.html')
+
+
 class FindTeacherView(View):
     def get(self, request):
-        return render(request, 'webeducation/find_teacher.html')
+        user = request.user
+        subjects_with_teacher = []
+        if user.is_authenticated and user.role == 'student':
+            # Отримати всі запити, незалежно від того, підтверджені вони чи ні
+            subjects_with_teacher = SubjectRequest.objects.filter(
+                student=user.student
+            ).values_list('subject_id', flat=True)
+
+        context = {
+            'subjects_with_teacher': subjects_with_teacher,
+        }
+        return render(request, 'webeducation/find_teacher.html', context)
 
 
 def view_teachers(request, subject_name):

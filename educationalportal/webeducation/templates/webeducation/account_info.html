@@ -57,6 +57,33 @@
         </form>
     </div>
 </div>
+
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="post" action="{% url 'delete_subject' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <select name="subject_id" class="form-control">
+                    <option value="">-- Choose a subject --</option>
+                    {% if user.teacher %}
+                        {% for subject in user.teacher.subjects.all %}
+                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                        {% endfor %}
+                    {% elif user.student %}
+                        {% for subject in user.student.subjects.all %}
+                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                        {% endfor %}
+                    {% endif %}
+
+                </select>
+            </div>
+            <button type="submit" class="btn btn-danger">Delete Subject</button>
+        </form>
+    </div>
+</div>
+
+
 <div class="row">
     <div class="col-md-6">
         <a href="{% url 'edit_account' %}" class="btn btn-secondary">Edit Account</a>

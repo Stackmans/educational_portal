@@ -78,13 +78,10 @@
                     <tbody>
                         {% for subject in user.student.subjects.all %}
                         <tr>
-                            <td><a href="{% url 'subject_tasks' subject_id=subject.id %}">{{ subject.name }}</a></td>
+                            <td><a><h6>{{ subject.name }}</h6></a></td>
                             <td>
-                                <form method="POST" action="{% url 'view_teachers' subject_name=subject.name %}">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="subject_id" value="{{ subject.id }}">
-                                    <button type="submit" formaction="{% url 'delete_subject' %}" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
+                                <a href="{% url 'subject_tasks' subject_id=subject.id %}" class="btn btn-success">check tasks</a>
+                                <input type="hidden" name="subject_id" value="{{ subject.id }}">
                             </td>
                         </tr>
                         {% endfor %}

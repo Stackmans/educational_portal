@@ -243,11 +243,6 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
-# class FindTeacherView(View):
-#     def get(self, request):
-#         return render(request, 'webeducation/find_teacher.html')
-
-
 class FindTeacherView(View):
     def get(self, request):
         user = request.user

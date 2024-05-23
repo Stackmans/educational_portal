@@ -10,17 +10,20 @@
         <div class="card-body" style="background-color: #b59a7a;">
             <h2 class="card-title">Solution by {{ solution.student.user.first_name }} {{ solution.student.user.last_name }}</h2>
             <ul class="list-group list-group-flush">
-                {% for solution in solutions %}
-                <li class="list-group-item" style="background-color: #b59a7a;">
-                    <p>{{ solution.solution_text }}</p>
-
-                    {% if solution.solution_file %}
-                    <a href="{{ solution.solution_file.url }}" class="btn btn-primary">Download Solution File</a>
+                {% for solution_item in solutions %}
+                    {% if solution_item.student == solution.student %}
+                        <li class="list-group-item" style="background-color: #b59a7a;">
+                            <p>{{ solution_item.solution_text }}</p>
+                            {% if solution_item.solution_file %}
+                                <a href="{{ solution_item.solution_file.url }}" class="btn btn-primary">Download Solution File</a>
+                            {% endif %}
+                        </li>
                     {% endif %}
-                </li>
-                {% empty %}
-                <li class="list-group-item">No solutions found.</li>
-                {% endfor %}
+
+{% empty %}
+    <li class="list-group-item">No solutions found.</li>
+{% endfor %}
+
             </ul>
         </div>
     </div>

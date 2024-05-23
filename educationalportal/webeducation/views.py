@@ -150,14 +150,6 @@ class SolutionsView(View):
 
 
 class CheckSolutionView(View):
-    def get(self, request, task_id, solution_id):
-        solution = get_object_or_404(TaskSolution, id=solution_id)
-        task = get_object_or_404(Task, id=task_id)
-        solutions = TaskSolution.objects.filter(task=task)
-
-        context = {'task': task, 'solutions': solutions, 'solution': solution}
-        return render(request, 'webeducation/view_solution.html', context)
-
     def post(self, request, task_id, solution_id):
         solution = get_object_or_404(TaskSolution, id=solution_id)
         task = get_object_or_404(Task, id=task_id)
@@ -165,6 +157,14 @@ class CheckSolutionView(View):
 
         context = {'task': task, 'solutions': solutions, 'solution': solution}
         return render(request, 'webeducation/view_solution.html', context)
+
+    # def get(self, request, task_id, solution_id):
+    #     solution = get_object_or_404(TaskSolution, id=solution_id)
+    #     task = get_object_or_404(Task, id=task_id)
+    #     solutions = TaskSolution.objects.filter(task=task)
+    #
+    #     context = {'task': task, 'solutions': solutions, 'solution': solution}
+    #     return render(request, 'webeducation/view_solution.html', context)
 
 
 class AddTaskView(View):

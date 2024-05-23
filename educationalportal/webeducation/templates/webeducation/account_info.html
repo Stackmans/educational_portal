@@ -22,12 +22,12 @@
                 </div>
 
                 <div class="card-body">
-                    <p>Username: {{ user.username }}</p>
-                    <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
-                    <p>Role: {{ user.role }}</p>
-                    <p>Email: {{ user.email }}</p>
+                    <h6><p>Username: {{ user.username }}</p></h6>
+                    <h6><p>Name: {{ user.first_name }} {{ user.last_name }}</p></h6>
+                    <h6><p>Role: {{ user.role }}</p></h6>
+                    <h6><p>Email: {{ user.email }}</p></h6>
                     {% if user.student %}
-                    <p>Course: {{ user.student.course.course_number }}</p>
+                    <h6><p>Course: {{ user.student.course.course_number }}</p></h6>
                     {% endif %}
                 </div>
 
@@ -46,8 +46,8 @@
         <form method="post" action="{% url 'add_subject_to_user' %}">
             {% csrf_token %}
             <div class="form-group">
+                <h5>Choose subject to add in your subjects</h5>
                 <select name="subject_id" class="form-control">
-                    <option value="">-- Choose a subject --</option>
                     {% for subject in subjects %}
                         <option value="{{ subject.id }}">{{ subject.name }}</option>
                     {% endfor %}
@@ -64,8 +64,10 @@
         <form method="post" action="{% url 'delete_subject' %}">
             {% csrf_token %}
             <div class="form-group">
+                <h5>Choose subject to delete</h5>
                 <select name="subject_id" class="form-control">
-                    <option value="">-- Choose a subject --</option>
+
+
                     {% if user.teacher %}
                         {% for subject in user.teacher.subjects.all %}
                             <option value="{{ subject.id }}">{{ subject.name }}</option>

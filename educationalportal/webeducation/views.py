@@ -392,7 +392,7 @@ class LoginView(View):
 class DeleteAccount(View):
     def get(self, request):
         form = DeleteAccountForm()
-        return render(request, 'webeducation/account_info.html', {'form': form})
+        return render(request, 'webeducation/account_info.html', {'form': form,})
 
     def post(self, request):
         form = DeleteAccountForm(request.POST)
@@ -400,4 +400,4 @@ class DeleteAccount(View):
             request.user.delete()
             return redirect('home')
         else:
-            return render(request, 'webeducation/account_info.html', {'form': form})
+            return render(request, 'webeducation/account_info.html', {'form': form,})

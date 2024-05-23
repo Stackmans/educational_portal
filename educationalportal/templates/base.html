@@ -70,9 +70,8 @@
                     </tbody>
                 </table>
                 <h3><a>Another</a></h3>
-                <p><a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a></p>
 
-                {% if requests %}
+                {% if has_unconfirmed_requests %}
                     <a href="{% url 'requests' %}" class="btn btn-danger">You have unconfirmed requests</a>
                 {% else %}
                     <a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a>

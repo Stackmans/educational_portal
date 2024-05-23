@@ -16,10 +16,6 @@ info = {
 
 
 class UploadPhotoView(View):
-    # def get(self, request):
-    #     form = PhotoUploadForm(instance=request.user)
-    #     return render(request, 'webeducation/upload_photo.html', {'form': form})
-
     def post(self, request):
         form = PhotoUploadForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
@@ -105,20 +101,6 @@ class TaskSolvingView(View):
             messages.success(request, 'Solution saved successfully.')
             return redirect('check_account')
         return render(request, 'webeducation/task_solution.html', context)
-
-
-# class SubjectTasksView(View):
-#     def get(self, request, subject_id):
-#         subject = get_object_or_404(Subject, id=subject_id)
-#         tasks = Task.objects.filter(subject=subject)
-#         courses = Course.objects.all()
-#
-#         if request.user.role == 'student' and request.user.student.course:
-#             tasks = tasks.filter(course_num=request.user.student.course)
-#
-#         context = {'subject': subject, 'tasks': tasks, 'courses': courses}
-#
-#         return render(request, 'webeducation/subject_tasks.html', context)
 
 
 class SubjectTasksView(View):

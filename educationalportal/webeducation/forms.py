@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Subject, Course, Task, TaskSolution
+from .models import CustomUser, Subject, Course, Task, TaskSolution, StudentSubjectPoints
 
 
 class SubjectRequestForm(forms.Form):
@@ -57,3 +57,8 @@ class TaskSolutionForm(forms.ModelForm):
         model = TaskSolution
         fields = ['solution_text', 'solution_file']
 
+
+class StudentSubjectPointsFrom(forms.ModelForm):
+    class Meta:
+        model = StudentSubjectPoints
+        fields = ['points', 'description']

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+
+<h1>Give Grade</h1>
+<h2>Student: {{ student.user.first_name }} {{ student.user.last_name }}</h2>
+<h3>Subject: {{ subject }} </h3>
+<h3>Task: {{ task.theme }} </h3>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_points">Points:</label>
+            {{ form.points }}
+        </div>
+        <div class="form-group">
+            <label for="id_description">Description:</label>
+            <textarea id="id_description" name="description" class="form-control col-md-6" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success" style="background-color: #b59a7a; color: black;">Submit</button>
+    </form>
+
+{% endblock %}

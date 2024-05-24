@@ -6,13 +6,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
-    CustomUserChangeForm, TaskSolutionForm
+    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution
 from .utils import add_subject
 
 info = {
     'title': 'Enlighten me'
 }
+
+
+# return redirect('.')
 
 
 class UploadPhotoView(View):
@@ -154,8 +157,9 @@ class CheckSolutionView(View):
         solution = get_object_or_404(TaskSolution, id=solution_id)
         task = get_object_or_404(Task, id=task_id)
         solutions = TaskSolution.objects.filter(task=task)
+        subject = task.subject
 
-        context = {'task': task, 'solutions': solutions, 'solution': solution}
+        context = {'task': task, 'solutions': solutions, 'solution': solution, 'subject': subject}
         return render(request, 'webeducation/view_solution.html', context)
 
     # def get(self, request, task_id, solution_id):
@@ -180,6 +184,30 @@ class AddTaskView(View):
             return redirect('check_account')
 
         return render(request, 'webeducation/add_task.html', {'form': form})
+
+
+class GiveGradeView(View):
+    def get(self, request, student_id, subject_id, task_id):
+        student = get_object_or_404(Student, id=student_id)
+        subject = get_object_or_404(Subject, id=subject_id)
+        task = get_object_or_404(Task, id=task_id)
+        form = StudentSubjectPointsFrom(initial={'student': student, 'subject': subject, 'task': task})
+        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student, 'subject': subject, 'task': task})
+
+    def post(self, request, student_id, subject_id, task_id):
+        student = get_object_or_404(Student, id=student_id)
+        subject = get_object_or_404(Subject, id=subject_id)
+        task = get_object_or_404(Task, id=task_id)
+        form = StudentSubjectPointsFrom(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.student = student
+            instance.subject = subject
+            instance.task = task
+            instance.save()
+            messages.success(request, 'You have successfully submitted a grade.')
+            return redirect('check_account')
+        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student, 'subject': subject, 'task': task})
 
 
 def get_subjects(request):

@@ -8,6 +8,7 @@
 
     <div class="card">
         <div class="card-body" style="background-color: #b59a7a;">
+
             <h2 class="card-title">Solution by {{ solution.student.user.first_name }} {{ solution.student.user.last_name }}</h2>
             <ul class="list-group list-group-flush">
                 {% for solution_item in solutions %}
@@ -15,8 +16,11 @@
                         <li class="list-group-item" style="background-color: #b59a7a;">
                             <p>{{ solution_item.solution_text }}</p>
                             {% if solution_item.solution_file %}
-                                <a href="{{ solution_item.solution_file.url }}" class="btn btn-primary">Download Solution File</a>
+                                <p><a href="{{ solution_item.solution_file.url }}" class="btn btn-primary" style="background-color: grey;">Download Solution File</a></p>
+
                             {% endif %}
+                            <a href="{% url 'give_grade' student_id=solution_item.student.id subject_id=subject.id task_id=task.id %}" class="btn btn-success" style="background-color: #8B4513;">Give Grade</a>
+
                         </li>
                     {% endif %}
 

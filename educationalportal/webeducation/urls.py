@@ -27,14 +27,14 @@ urlpatterns = [
     path('subject/<slug:subject_name>/task/<int:task_id>/', views.TaskSolvingView.as_view(), name='task_solving'),
     path('<slug:subject_name>/task/<int:task_id>/solutions/', views.SolutionsView.as_view(), name='check_solutions'),
     path('check_solution/<int:task_id>/<int:solution_id>/', views.CheckSolutionView.as_view(), name='check_solution'),
-
-
     path('give_grade/<int:student_id>/<int:subject_id>/<int:task_id>/', views.GiveGradeView.as_view(), name='give_grade'),
-
     path('find_teacher/', views.FindTeacherView.as_view(), name='find_teacher'),
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
     path('delete', views.DeleteAccount.as_view(), name='delete_account'),
     path('select_course/', views.SelectCourseView.as_view(), name='select_course'),
     path('upload_photo/', views.UploadPhotoView.as_view(), name='upload_photo'),
+
+    path('create_quiz/', views.CreateQuizView.as_view(), name='create_quiz'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

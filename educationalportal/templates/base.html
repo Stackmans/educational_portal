@@ -72,12 +72,14 @@
                 <h3><a>Another</a></h3>
 
                 {% if has_unconfirmed_requests %}
-                    <a href="{% url 'requests' %}" class="btn btn-danger">You have unconfirmed requests</a>
+                    <p><a href="{% url 'requests' %}" class="btn btn-danger">You have unconfirmed requests</a></p>
                 {% else %}
-                    <a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a>
+                    <p><a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a></p>
                 {% endif %}
 
                 <p><a href="{% url 'add_task' %}" class="btn btn-outline-primary">Add Task</a></p>
+
+                <p><a href="{% url 'create_quiz' %}" class="btn btn-outline-primary">Add Test</a></p>
             {% elif user.role == 'student' %}
                 <table class="table table-striped">
 

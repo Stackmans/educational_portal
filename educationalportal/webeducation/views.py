@@ -6,16 +6,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
-    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom
+    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution
 from .utils import add_subject
 
 info = {
     'title': 'Enlighten me'
 }
-
-
-# return redirect('.')
 
 
 class UploadPhotoView(View):
@@ -219,10 +216,6 @@ def get_subjects(request):
 
 
 class AddSubjectToUserView(View):
-    # def get(self, request):
-    #     subjects = Subject.objects.all()
-    #     return render(request, 'webeducation/check_account.html', {'subjects': subjects})
-
     def post(self, request):
         subject_ids = request.POST.getlist('subject_id')
         for subject_id in subject_ids:
@@ -343,8 +336,6 @@ class SendRequestView(View):
         return redirect('check_account')
 
 
-# ---------------------- User methods ----------------------
-
 class RegisterView(View):
     def get(self, request):
         form = RegisterUserForm()
@@ -396,21 +387,6 @@ class LoginView(View):
         return render(request, 'webeducation/login.html', {'form': form})
 
 
-# @method_decorator(login_required, name='dispatch')
-# class DeleteAccount(View):
-#     def get(self, request):
-#         form = DeleteAccountForm()
-#         return render(request, 'webeducation/account_info.html', {'form': form})
-#
-#     def post(self, request):
-#         form = DeleteAccountForm(request.POST)
-#         if form.is_valid() and form.cleaned_data['confirm_delete']:
-#             request.user.delete()
-#             return redirect('home')
-#         else:
-#             return render(request, 'webeducation/account_info.html', {'form': form})
-
-
 @method_decorator(login_required, name='dispatch')
 class DeleteAccount(View):
     def get(self, request):
@@ -424,3 +400,31 @@ class DeleteAccount(View):
             return redirect('home')
         else:
             return render(request, 'webeducation/account_info.html', {'form': form,})
+
+
+# class CreateQuizView(View):
+#     def get(self, request):
+#         form = QuizForm()  # Ініціалізуйте форму для створення контрольної роботи
+#         return render(request, 'webeducation/create_test.html', {'form': form})
+#
+#     def post(self, request):
+#         form = QuizForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#         return render(request, 'webeducation/create_test.html', {'form': form})
+
+
+class CreateQuizView(View):
+    def get(self, request):
+        form = QuizForm()
+        return render(request, 'webeducation/create_test.html', {'form': form})
+
+    def post(self, request):
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            test = form.save(commit=False)  # wtf
+            test.subject_id = request.POST.get('subject')
+            test.save()
+            messages.success(request, 'Test saved successfully.')
+            return redirect('check_account')
+        return render(request, 'webeducation/create_test.html', {'form': form})

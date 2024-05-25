@@ -86,3 +86,32 @@ class StudentSubjectPoints(models.Model):
 
     def __str__(self):
         return f"{self.student.user.username} - {self.subject.name} - Task: {self.task.theme} - Points: {self.points}"
+
+
+class Quiz(models.Model):
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    course = models.IntegerField(choices=[(i, str(i)) for i in range(1, 7)])
+    theme = models.CharField(max_length=200)
+    description = models.TextField()
+    time_limit = models.IntegerField(default=30, validators=[MinValueValidator(1)])
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.subject.name} - {self.theme}"
+
+
+class QuizQuestion(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='questions')
+    question_text = models.TextField()
+
+    def __str__(self):
+        return self.question_text
+
+
+class QuizOption(models.Model):
+    question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name='options')
+    option_text = models.CharField(max_length=200)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.option_text} ({'Correct' if self.is_correct else 'Incorrect'})"

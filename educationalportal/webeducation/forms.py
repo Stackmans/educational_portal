@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Subject, Course, Task, TaskSolution, StudentSubjectPoints
+from .models import CustomUser, Subject, Course, Task, TaskSolution, StudentSubjectPoints, Quiz
 
 
 class SubjectRequestForm(forms.Form):
@@ -62,3 +62,16 @@ class StudentSubjectPointsFrom(forms.ModelForm):
     class Meta:
         model = StudentSubjectPoints
         fields = ['points', 'description']
+
+
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ['theme', 'course', 'time_limit']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['theme'].label = 'Quiz Title'
+        self.fields['time_limit'].label = 'Time Limit (minutes)'
+        self.fields['time_limit'].widget.attrs['min'] = 5
+        self.fields['time_limit'].widget.attrs['max'] = 60

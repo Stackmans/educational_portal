@@ -157,18 +157,13 @@ class CheckSolutionView(View):
         solution = get_object_or_404(TaskSolution, id=solution_id)
         task = get_object_or_404(Task, id=task_id)
         solutions = TaskSolution.objects.filter(task=task)
-        subject = task.subject
 
-        context = {'task': task, 'solutions': solutions, 'solution': solution, 'subject': subject}
+        # points = solution.student.studentsubjectpoints_set.filter(task=task)
+        points = solution.student.studentsubjectpoints_set.filter(task=task).first()
+
+        context = {'task': task, 'solutions': solutions, 'solution': solution,
+                   'subject': task.subject, 'points': points}
         return render(request, 'webeducation/view_solution.html', context)
-
-    # def get(self, request, task_id, solution_id):
-    #     solution = get_object_or_404(TaskSolution, id=solution_id)
-    #     task = get_object_or_404(Task, id=task_id)
-    #     solutions = TaskSolution.objects.filter(task=task)
-    #
-    #     context = {'task': task, 'solutions': solutions, 'solution': solution}
-    #     return render(request, 'webeducation/view_solution.html', context)
 
 
 class AddTaskView(View):

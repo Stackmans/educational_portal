@@ -74,12 +74,13 @@
                 {% if has_unconfirmed_requests %}
                     <p><a href="{% url 'requests' %}" class="btn btn-danger">You have unconfirmed requests</a></p>
                 {% else %}
-                    <p><a href="{% url 'requests' %}" class="btn btn-outline-primary">Requests</a></p>
+                    <p><a href="{% url 'requests' %}" class="btn btn-outline-primary" style="background-color: #7a5a3b; color: white;">Requests</a></p>
                 {% endif %}
 
-                <p><a href="{% url 'add_task' %}" class="btn btn-outline-primary">Add Task</a></p>
+                <p><a href="{% url 'add_task' %}" class="btn btn-outline-primary" style="background-color: #7a5a3b; color: white;">Add Task</a></p>
 
-                <p><a href="{% url 'create_quiz' %}" class="btn btn-outline-primary">Add Test</a></p>
+
+                <p><a href="{% url 'create_quiz' %}" class="btn btn-outline-primary" style="background-color: #7a5a3b; color: white;">Add Test</a></p>
             {% elif user.role == 'student' %}
                 <table class="table table-striped">
 

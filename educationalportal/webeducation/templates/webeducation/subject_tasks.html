@@ -19,7 +19,7 @@
                     {% if user.role == 'teacher' %}
 
                         {% for course in courses %}
-                            <p><a class="btn btn-primary" href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
+                            <p><a class="btn btn-primary" style="background-color: #b59a7a;" href="{% url 'subject_teacher_tasks' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
                         {% endfor %}
                     {% elif user.role == 'student' %}
                         {% if not has_teacher %}

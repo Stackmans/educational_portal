@@ -37,4 +37,7 @@ urlpatterns = [
 
     path('create_quiz/', views.CreateQuizView.as_view(), name='create_quiz'),
 
+    path('view_quiz/<int:quiz_id>/', views.ViewQuiz.as_view(), name='view_quiz'),
+    path('view_quiz/<int:quiz_id>/', views.ViewQuiz.as_view(), name='take_quiz'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

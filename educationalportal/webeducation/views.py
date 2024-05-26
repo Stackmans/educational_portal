@@ -6,8 +6,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
-    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm
-from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution
+    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
+from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
+    QuizQuestion, QuizOption
 from .utils import add_subject
 
 info = {
@@ -404,13 +405,17 @@ class DeleteAccount(View):
 
 # class CreateQuizView(View):
 #     def get(self, request):
-#         form = QuizForm()  # Ініціалізуйте форму для створення контрольної роботи
+#         form = QuizForm()
 #         return render(request, 'webeducation/create_test.html', {'form': form})
 #
 #     def post(self, request):
 #         form = QuizForm(request.POST)
 #         if form.is_valid():
-#             form.save()
+#             test = form.save(commit=False)
+#             test.subject_id = request.POST.get('subject')
+#             test.save()
+#             messages.success(request, 'Test saved successfully.')
+#             return redirect('check_account')
 #         return render(request, 'webeducation/create_test.html', {'form': form})
 
 
@@ -422,9 +427,37 @@ class CreateQuizView(View):
     def post(self, request):
         form = QuizForm(request.POST)
         if form.is_valid():
-            test = form.save(commit=False)  # wtf
-            test.subject_id = request.POST.get('subject')
-            test.save()
+            quiz = form.save(commit=False)
+            quiz.subject_id = request.POST.get('subject')
+            quiz.save()
+
+            questions = []
+            for key, value in request.POST.items():
+                if key.startswith('question'):
+                    question_text = value
+                    options = {
+                        'A': request.POST.get(f'optionA{key[-1]}'),
+                        'B': request.POST.get(f'optionB{key[-1]}'),
+                        'C': request.POST.get(f'optionC{key[-1]}'),
+                        'D': request.POST.get(f'optionD{key[-1]}'),
+                    }
+                    correct_option = request.POST.get(f'correct_option{key[-1]}')
+
+                    question = QuizQuestion.objects.create(quiz=quiz, question_text=question_text)
+                    questions.append(question)
+
+                    for option_text, is_correct in options.items():
+                        is_correct = True if option_text == correct_option else False
+                        QuizOption.objects.create(question=question, option_text=option_text, is_correct=is_correct)
+
             messages.success(request, 'Test saved successfully.')
             return redirect('check_account')
         return render(request, 'webeducation/create_test.html', {'form': form})
+
+
+class ViewQuiz(View):
+    def get(self, request, quiz_id):
+        quiz = get_object_or_404(Quiz, pk=quiz_id)
+        questions = quiz.questions.all()
+        context = {'quiz': quiz, 'questions': questions}
+        return render(request, 'webeducation/view_quiz.html', context)

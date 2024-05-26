@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main_content %}
+<div class="container text-center">
+    <title>View Quiz</title>
+    <h1>{{ quiz.subject.name }} - {{ quiz.theme }}</h1>
+    <h2>Are you ready to participate in Test?</h2>
+    <a href="#" class="btn btn-primary btn-lg" style="background-color: #b59a7a; color: black;">Take Quiz</a>
+</div>
+{% endblock %}
+

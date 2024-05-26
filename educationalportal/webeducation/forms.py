@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, Subject, Course, Task, TaskSolution, StudentSubjectPoints, Quiz
+from .models import CustomUser, Subject, Course, Task, TaskSolution, StudentSubjectPoints, Quiz, QuizQuestion, \
+    QuizOption
 
 
 class SubjectRequestForm(forms.Form):
@@ -75,3 +76,15 @@ class QuizForm(forms.ModelForm):
         self.fields['time_limit'].label = 'Time Limit (minutes)'
         self.fields['time_limit'].widget.attrs['min'] = 5
         self.fields['time_limit'].widget.attrs['max'] = 60
+
+
+class QuizQuestionForm(forms.ModelForm):
+    class Meta:
+        model = QuizQuestion
+        fields = ['question_text']
+
+
+class QuizOptionForm(forms.ModelForm):
+    class Meta:
+        model = QuizOption
+        fields = ['option_text', 'is_correct']

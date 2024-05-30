@@ -5,6 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.generic import ListView
+
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
     CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
@@ -400,23 +402,7 @@ class DeleteAccount(View):
             request.user.delete()
             return redirect('home')
         else:
-            return render(request, 'webeducation/account_info.html', {'form': form,})
-
-
-# class CreateQuizView(View):
-#     def get(self, request):
-#         form = QuizForm()
-#         return render(request, 'webeducation/create_test.html', {'form': form})
-#
-#     def post(self, request):
-#         form = QuizForm(request.POST)
-#         if form.is_valid():
-#             test = form.save(commit=False)
-#             test.subject_id = request.POST.get('subject')
-#             test.save()
-#             messages.success(request, 'Test saved successfully.')
-#             return redirect('check_account')
-#         return render(request, 'webeducation/create_test.html', {'form': form})
+            return render(request, 'webeducation/account_info.html', {'form': form})
 
 
 class CreateQuizView(View):
@@ -433,22 +419,30 @@ class CreateQuizView(View):
 
             questions = []
             for key, value in request.POST.items():
-                if key.startswith('question'):
+                if key.startswith('question_'):
                     question_text = value
-                    options = {
-                        'A': request.POST.get(f'optionA{key[-1]}'),
-                        'B': request.POST.get(f'optionB{key[-1]}'),
-                        'C': request.POST.get(f'optionC{key[-1]}'),
-                        'D': request.POST.get(f'optionD{key[-1]}'),
-                    }
-                    correct_option = request.POST.get(f'correct_option{key[-1]}')
-
                     question = QuizQuestion.objects.create(quiz=quiz, question_text=question_text)
                     questions.append(question)
 
+                    # Отримання варіантів відповідей та текстів окремо
+                    options = {
+                        'A': request.POST.get(f'optionA_{key.split("_")[1]}'),
+                        'B': request.POST.get(f'optionB_{key.split("_")[1]}'),
+                        'C': request.POST.get(f'optionC_{key.split("_")[1]}'),
+                        'D': request.POST.get(f'optionD_{key.split("_")[1]}'),
+                    }
+                    texts = {
+                        'A': request.POST.get(f'textA_{key.split("_")[1]}'),
+                        'B': request.POST.get(f'textB_{key.split("_")[1]}'),
+                        'C': request.POST.get(f'textC_{key.split("_")[1]}'),
+                        'D': request.POST.get(f'textD_{key.split("_")[1]}'),
+                    }
+
                     for option_text, is_correct in options.items():
-                        is_correct = True if option_text == correct_option else False
-                        QuizOption.objects.create(question=question, option_text=option_text, is_correct=is_correct)
+                        # Використання відповідного тексту для кожного варіанту
+                        text = texts[option_text]
+                        is_correct = True if option_text == request.POST.get(f'correct_option_{key.split("_")[1]}') else False
+                        QuizOption.objects.create(question=question, option_text=option_text, text=text, is_correct=is_correct)
 
             messages.success(request, 'Test saved successfully.')
             return redirect('check_account')
@@ -461,3 +455,27 @@ class ViewQuiz(View):
         questions = quiz.questions.all()
         context = {'quiz': quiz, 'questions': questions}
         return render(request, 'webeducation/view_quiz.html', context)
+
+
+class QuizSubmissionView(View):
+    def post(self, request, quiz_id):
+        quiz = Quiz.objects.get(id=quiz_id)
+        score = 0
+        for question in quiz.questions.all():
+            selected_option_id = request.POST.get('question_' + str(question.id))
+            if selected_option_id:
+                selected_option = QuizOption.objects.get(id=selected_option_id)
+                if selected_option.is_correct:
+                    score += 1
+
+        # Save the score or show it in some way
+        messages.success(request, f'Your score: {score}/{quiz.questions.count()}')
+        return redirect('check_account')
+
+
+class SolveQuizView(View):
+    def get(self, request, quiz_id):
+        quiz = get_object_or_404(Quiz, pk=quiz_id)
+        context = {'quiz': quiz}
+        return render(request, 'webeducation/test.html', context)
+

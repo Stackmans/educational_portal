@@ -110,7 +110,8 @@ class QuizQuestion(models.Model):
 
 class QuizOption(models.Model):
     question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE, related_name='options')
-    option_text = models.CharField(max_length=200)
+    option_text = models.CharField(max_length=5)
+    text = models.CharField(max_length=200, blank=True, null=True)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):

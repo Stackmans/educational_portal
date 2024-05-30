@@ -24,26 +24,30 @@
         <div id="questions">
             <div class="question form-group">
                 <label for="question" class="form-label">Question:</label>
-                <input type="text" name="question1" class="form-control mb-2" style="background-color: #b59a7a;" required>
+                <input type="text" name="question_1" class="form-control mb-2" style="background-color: #b59a7a;" required>
                 <div class="form-inline">
                     <label for="optionA" class="form-label mr-2">A:</label>
-                    <input type="text" name="optionA1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                    <input type="radio" name="correct_option1" value="A" required>
+
+                    <input type="text" name="textA_1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                    <input type="radio" name="correct_option_1" value="A" required>
                 </div>
                 <div class="form-inline">
                     <label for="optionB" class="form-label mr-2">B:</label>
-                    <input type="text" name="optionB1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                    <input type="radio" name="correct_option1" value="B" required>
+
+                    <input type="text" name="textB_1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                    <input type="radio" name="correct_option_1" value="B" required>
                 </div>
                 <div class="form-inline">
                     <label for="optionC" class="form-label mr-2">C:</label>
-                    <input type="text" name="optionC1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                    <input type="radio" name="correct_option1" value="C" required>
+
+                    <input type="text" name="textC_1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                    <input type="radio" name="correct_option_1" value="C" required>
                 </div>
                 <div class="form-inline">
                     <label for="optionD" class="form-label mr-2">D:</label>
-                    <input type="text" name="optionD1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                    <input type="radio" name="correct_option1" value="D" required>
+
+                    <input type="text" name="textD_1" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                    <input type="radio" name="correct_option_1" value="D" required>
                 </div>
                 <button type="button" onclick="removeQuestion(this)" class="btn btn-sm btn-danger">Remove</button>
             </div>
@@ -63,26 +67,30 @@
         const questionCount = document.querySelectorAll('.question').length + 1;
         questionDiv.innerHTML = `
             <label for="question" class="form-label">Question:</label>
-            <input type="text" name="question${questionCount}" class="form-control mb-2" style="background-color: #b59a7a;" required>
+            <input type="text" name="question_${questionCount}" class="form-control mb-2" style="background-color: #b59a7a;" required>
             <div class="form-inline">
                 <label for="optionA" class="form-label mr-2">A:</label>
-                <input type="text" name="optionA${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                <input type="radio" name="correct_option${questionCount}" value="A" required>
+
+                <input type="text" name="textA_${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                <input type="radio" name="correct_option_${questionCount}" value="A" required>
             </div>
             <div class="form-inline">
                 <label for="optionB" class="form-label mr-2">B:</label>
-                <input type="text" name="optionB${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                <input type="radio" name="correct_option${questionCount}" value="B" required>
+
+                <input type="text" name="textB_${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                <input type="radio" name="correct_option_${questionCount}" value="B" required>
             </div>
             <div class="form-inline">
                 <label for="optionC" class="form-label mr-2">C:</label>
-                <input type="text" name="optionC${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                <input type="radio" name="correct_option${questionCount}" value="C" required>
+
+                <input type="text" name="textC_${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                <input type="radio" name="correct_option_${questionCount}" value="C" required>
             </div>
             <div class="form-inline">
                 <label for="optionD" class="form-label mr-2">D:</label>
-                <input type="text" name="optionD${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
-                <input type="radio" name="correct_option${questionCount}" value="D" required>
+
+                <input type="text" name="textD_${questionCount}" class="form-control mb-2 mr-2" style="background-color: #b59a7a;" required>
+                <input type="radio" name="correct_option_${questionCount}" value="D" required>
             </div>
             <button type="button" onclick="removeQuestion(this)" class="btn btn-sm btn-danger">Remove</button>
         `;
@@ -95,4 +103,3 @@
     }
 </script>
 {% endblock %}
-

@@ -10,7 +10,7 @@ from django.views.generic import ListView
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
     CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
-    QuizQuestion, QuizOption
+    QuizQuestion, QuizOption, QuizAnswer
 from .utils import add_subject
 
 info = {
@@ -473,9 +473,35 @@ class QuizSubmissionView(View):
         return redirect('check_account')
 
 
+# class SolveQuizView(View):
+#     def get(self, request, quiz_id):
+#         quiz = get_object_or_404(Quiz, pk=quiz_id)
+#         context = {'quiz': quiz}
+#         return render(request, 'webeducation/test.html', context)
+
+
 class SolveQuizView(View):
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         context = {'quiz': quiz}
         return render(request, 'webeducation/test.html', context)
 
+    def post(self, request, quiz_id):
+        quiz = get_object_or_404(Quiz, pk=quiz_id)
+
+        # Перевіряємо, чи користувач відповів на всі питання
+        if all(f'question_{question.id}' in request.POST for question in quiz.questions.all()):
+            # Створюємо або оновлюємо відповідь для кожного питання
+            for question in quiz.questions.all():
+                chosen_option_id = request.POST.get(f'question_{question.id}')
+                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
+                QuizAnswer.objects.update_or_create(
+                    student=request.user.student,
+                    quiz_question=question,
+                    defaults={'chosen_option': chosen_option}
+                )
+
+            messages.success(request, 'Your test saved successful')
+            return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
+
+        return redirect('solve_quiz', quiz_id=quiz.id)

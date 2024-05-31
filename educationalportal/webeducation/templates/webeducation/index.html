@@ -7,15 +7,16 @@
         {% with subject=subject_data.subject quizzes=subject_data.quizzes %}
             {% if quizzes %}
                 <tr>
-                    <h3>{{ subject.name }} Test:</h3>
                     <td>
                         {% for quiz_data in quizzes %}
                             {% if user.role == 'student' %}
-                                {% if not quiz_data.answered %}
-                                    <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz_data.quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz_data.quiz.theme }}</a>
-                                {% endif %}
-                            {% elif user.role == 'teacher' %}
-                                <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz_data.quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz_data.quiz.theme }}</a>
+                                <h3>{{ subject.name }} Test:</h3>
+                                    {% if not quiz_data.answered %}
+                                        <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz_data.quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz_data.quiz.theme }}</a>
+                                    {% else %}
+                                        <h5>You have completed test: {{ quiz_data.quiz.theme }}</h5>
+                                    {% endif %}
+
                             {% endif %}
                         {% endfor %}
                     </td>

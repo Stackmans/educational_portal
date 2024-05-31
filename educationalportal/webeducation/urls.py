@@ -35,10 +35,10 @@ urlpatterns = [
     path('select_course/', views.SelectCourseView.as_view(), name='select_course'),
     path('upload_photo/', views.UploadPhotoView.as_view(), name='upload_photo'),
     path('create_quiz/', views.CreateQuizView.as_view(), name='create_quiz'),
-    path('view_quiz/<int:quiz_id>/', views.ViewQuiz.as_view(), name='view_quiz'),
 
-    path('solve_quiz/<int:quiz_id>/', views.SolveQuizView.as_view(), name='solve_quiz'),
-
+    path('solve_quiz/<int:subject_id>/<int:quiz_id>/', views.SolveQuizView.as_view(), name='solve_quiz'),
     path('submit_quiz/<int:quiz_id>/', views.QuizSubmissionView.as_view(), name='submit_quiz'),
+
+    path('view_quiz/<int:subject_id>/<int:quiz_id>/', views.ViewQuiz.as_view(), name='view_quiz'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

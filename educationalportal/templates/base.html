@@ -89,9 +89,7 @@
                         <tr>
                             <td><a><h6>{{ subject.name }}</h6></a></td>
                             <td>
-                                {% if subject.quiz_set.exists %}
-                                    <a href="{% url 'view_quiz' subject.quiz_set.first.id %}" class="btn btn-primary">View Quiz</a>
-                                {% endif %}
+
                                 <a href="{% url 'subject_tasks' subject_id=subject.id %}" class="btn btn-success" >check tasks</a>
                                 <input type="hidden" name="subject_id" value="{{ subject.id }}">
                             </td>

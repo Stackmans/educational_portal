@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-
 {% block main_content %}
-Main content
+    Main content
+        <tbody>
+        {% for subject in user.student.subjects.all %}
+        <tr>
+            {% if subject.quiz_set.exists %}
+            <td><a><h6>{{ subject.name }}</h6></a></td>
+            <td>
+                {% for quiz in subject.quiz_set.all %}
+                <a href="{% url 'view_quiz' quiz_id=quiz.id subject_id=subject.id %}" class="btn btn-primary">View Quiz: {{ quiz.theme }}</a>
+                {% endfor %}
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
 {% endblock %}

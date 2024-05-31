@@ -65,7 +65,7 @@ class IndexView(View):
         form = SubjectDisplayForm()
         context = {
             'form': form,
-            'info': info
+            'info': info,
         }
         return render(request, 'webeducation/index.html', context)
 
@@ -449,14 +449,6 @@ class CreateQuizView(View):
         return render(request, 'webeducation/create_test.html', {'form': form})
 
 
-class ViewQuiz(View):
-    def get(self, request, quiz_id):
-        quiz = get_object_or_404(Quiz, pk=quiz_id)
-        questions = quiz.questions.all()
-        context = {'quiz': quiz, 'questions': questions}
-        return render(request, 'webeducation/view_quiz.html', context)
-
-
 class QuizSubmissionView(View):
     def post(self, request, quiz_id):
         quiz = Quiz.objects.get(id=quiz_id)
@@ -473,21 +465,16 @@ class QuizSubmissionView(View):
         return redirect('check_account')
 
 
-# class SolveQuizView(View):
-#     def get(self, request, quiz_id):
-#         quiz = get_object_or_404(Quiz, pk=quiz_id)
-#         context = {'quiz': quiz}
-#         return render(request, 'webeducation/test.html', context)
-
-
 class SolveQuizView(View):
-    def get(self, request, quiz_id):
+    def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
-        context = {'quiz': quiz}
+        subject = get_object_or_404(Subject, pk=subject_id)
+        context = {'quiz': quiz, 'subject': subject}
         return render(request, 'webeducation/test.html', context)
 
-    def post(self, request, quiz_id):
+    def post(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
+        subject = get_object_or_404(Subject, pk=subject_id)
 
         # Перевіряємо, чи користувач відповів на всі питання
         if all(f'question_{question.id}' in request.POST for question in quiz.questions.all()):
@@ -505,3 +492,12 @@ class SolveQuizView(View):
             return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
 
         return redirect('solve_quiz', quiz_id=quiz.id)
+
+
+class ViewQuiz(View):
+    def get(self, request, quiz_id, subject_id):
+        quiz = get_object_or_404(Quiz, pk=quiz_id)
+        subject = get_object_or_404(Subject, pk=subject_id)
+        questions = quiz.questions.all()
+        context = {'quiz': quiz, 'questions': questions, 'subject': subject}
+        return render(request, 'webeducation/view_quiz.html', context)

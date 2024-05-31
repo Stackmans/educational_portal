@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block main_content %}
-<form method="POST" action="{% url 'solve_quiz' quiz.id %}">
+<form method="POST" action="{% url 'solve_quiz' quiz.id subject.id %}">
     {% csrf_token %}
     {% for question in quiz.questions.all %}
     <div class="card mt-4" >

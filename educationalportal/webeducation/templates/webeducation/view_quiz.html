@@ -7,7 +7,7 @@
     <title>View Quiz</title>
     <h1>{{ quiz.subject.name }} - {{ quiz.theme }}</h1>
     <h2>Are you ready to participate in Test?</h2>
-    <a href="{% url 'solve_quiz' quiz_id=quiz.id subject_id=subject.id %}" class="btn btn-primary btn-lg" style="background-color: #b59a7a; color: black;"><h3>Let's Test</h3></a>
+    <a href="{% url 'solve_quiz' subject_id=subject.id quiz_id=quiz.id %}" class="btn btn-primary btn-lg" style="background-color: #b59a7a; color: black;"><h3>Let's Test</h3></a>
 </div>
 {% endblock %}
 

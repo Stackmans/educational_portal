@@ -491,7 +491,7 @@ class SolveQuizView(View):
             messages.success(request, 'Your test saved successful')
             return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
 
-        return redirect('solve_quiz', quiz_id=quiz.id)
+        return redirect('check_account', quiz_id=quiz.id)
 
 
 class ViewQuiz(View):

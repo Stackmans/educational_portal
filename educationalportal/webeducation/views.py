@@ -2,11 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Q  # wtf
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import ListView
-
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
     CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
@@ -60,14 +59,40 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
+# class IndexView(View):
+#     def get(self, request):
+#         form = SubjectDisplayForm()
+#         context = {
+#             'form': form,
+#             'info': info,
+#         }
+#         return render(request, 'webeducation/index.html', context)
+
+
 class IndexView(View):
     def get(self, request):
         form = SubjectDisplayForm()
-        context = {
-            'form': form,
-            'info': info,
-        }
+        user = request.user
+        quizzes = self.get_quizzes_for_user(user) if not user.is_anonymous else []
+        context = {'form': form, 'info': info, 'quizzes': quizzes, 'user': user}
         return render(request, 'webeducation/index.html', context)
+
+    def get_quizzes_for_user(self, user):
+        quizzes = []
+        if user.role == 'student':
+            for subject in user.student.subjects.all():
+                quizzes_for_subject = []
+                for quiz in subject.quiz_set.all():
+                    answered = QuizAnswer.objects.filter(student=user.student, quiz_question__quiz=quiz).exists()
+                    quizzes_for_subject.append({'quiz': quiz, 'answered': answered})
+                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+        elif user.role == 'teacher':
+            for subject in user.teacher.subjects.all():
+                quizzes_for_subject = []
+                for quiz in subject.quiz_set.all():
+                    quizzes_for_subject.append({'quiz': quiz})
+                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+        return quizzes
 
 
 # try to create decorator to check for a student

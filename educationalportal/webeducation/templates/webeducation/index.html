@@ -2,19 +2,26 @@
 {% load static %}
 
 {% block main_content %}
-    Main content
-        <tbody>
-        {% for subject in user.student.subjects.all %}
-        <tr>
-            {% if subject.quiz_set.exists %}
-            <td><a><h6>{{ subject.name }}</h6></a></td>
-            <td>
-                {% for quiz in subject.quiz_set.all %}
-                <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz.theme }}</a>
-                {% endfor %}
-            </td>
+    <tbody>
+    {% for subject_data in quizzes %}
+        {% with subject=subject_data.subject quizzes=subject_data.quizzes %}
+            {% if quizzes %}
+                <tr>
+                    <h3>{{ subject.name }} Test:</h3>
+                    <td>
+                        {% for quiz_data in quizzes %}
+                            {% if user.role == 'student' %}
+                                {% if not quiz_data.answered %}
+                                    <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz_data.quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz_data.quiz.theme }}</a>
+                                {% endif %}
+                            {% elif user.role == 'teacher' %}
+                                <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz_data.quiz.id %}" class="btn btn-primary">View Quiz: {{ quiz_data.quiz.theme }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
             {% endif %}
-        </tr>
-        {% endfor %}
-        </tbody>
+        {% endwith %}
+    {% endfor %}
+    </tbody>
 {% endblock %}

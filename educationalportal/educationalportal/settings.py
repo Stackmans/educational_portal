@@ -58,6 +58,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'webeducation.context_processors.unconfirmed_requests',
+                'webeducation.context_processors.check_student_quizzes',
+
             ],
         },
     },

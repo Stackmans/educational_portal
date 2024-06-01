@@ -59,40 +59,40 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
-# class IndexView(View):
-#     def get(self, request):
-#         form = SubjectDisplayForm()
-#         context = {
-#             'form': form,
-#             'info': info,
-#         }
-#         return render(request, 'webeducation/index.html', context)
-
-
 class IndexView(View):
     def get(self, request):
         form = SubjectDisplayForm()
-        user = request.user
-        quizzes = self.get_quizzes_for_user(user) if not user.is_anonymous else []
-        context = {'form': form, 'info': info, 'quizzes': quizzes, 'user': user}
+        context = {
+            'form': form,
+            'info': info,
+        }
         return render(request, 'webeducation/index.html', context)
 
-    def get_quizzes_for_user(self, user):
-        quizzes = []
-        if user.role == 'student':
-            for subject in user.student.subjects.all():
-                quizzes_for_subject = []
-                for quiz in subject.quiz_set.all():
-                    answered = QuizAnswer.objects.filter(student=user.student, quiz_question__quiz=quiz).exists()
-                    quizzes_for_subject.append({'quiz': quiz, 'answered': answered})
-                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
-        elif user.role == 'teacher':
-            for subject in user.teacher.subjects.all():
-                quizzes_for_subject = []
-                for quiz in subject.quiz_set.all():
-                    quizzes_for_subject.append({'quiz': quiz})
-                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
-        return quizzes
+
+# class IndexView(View):
+#     def get(self, request):
+#         form = SubjectDisplayForm()
+#         user = request.user
+#         quizzes = self.get_quizzes_for_user(user) if not user.is_anonymous else []
+#         context = {'form': form, 'info': info, 'quizzes': quizzes, 'user': user}
+#         return render(request, 'webeducation/index.html', context)
+#
+#     def get_quizzes_for_user(self, user):
+#         quizzes = []
+#         if user.role == 'student':
+#             for subject in user.student.subjects.all():
+#                 quizzes_for_subject = []
+#                 for quiz in subject.quiz_set.all():
+#                     answered = QuizAnswer.objects.filter(student=user.student, quiz_question__quiz=quiz).exists()
+#                     quizzes_for_subject.append({'quiz': quiz, 'answered': answered})
+#                 quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+#         elif user.role == 'teacher':
+#             for subject in user.teacher.subjects.all():
+#                 quizzes_for_subject = []
+#                 for quiz in subject.quiz_set.all():
+#                     quizzes_for_subject.append({'quiz': quiz})
+#                 quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+#         return quizzes
 
 
 # try to create decorator to check for a student
@@ -526,3 +526,53 @@ class ViewQuiz(View):
         questions = quiz.questions.all()
         context = {'quiz': quiz, 'questions': questions, 'subject': subject}
         return render(request, 'webeducation/view_quiz.html', context)
+
+
+# class SubjectQuizzesView(View):
+#     def get(self, request, subject_id, quiz_id):
+#         subject = get_object_or_404(Subject, id=subject_id)
+#         quizzes = Quiz.objects.filter(subject=subject)
+#         courses = Course.objects.all()
+#         user = request.user
+#
+#         has_teacher = False
+#         if user.role == 'student':
+#             # Перевірка наявності підтвердженого запиту у студента для викладача з даного предмета
+#             has_teacher = SubjectRequest.objects.filter(student=user.student, subject=subject, is_confirmed=True
+#                                                         ).exists()
+#             if user.student.course:
+#                 quizzes = quizzes.filter(course_num=user.student.course)
+#         context = {
+#             'subject': subject,
+#             'quizzes': quizzes,
+#             'courses': courses,
+#             'has_teacher': has_teacher,
+#             'quiz_id': quiz_id,  # Додаємо quiz_id у контекст
+#         }
+#         return render(request, 'webeducation/subject_quizzes.html', context)
+
+
+class QuizzesView(View):
+    def get(self, request):
+        form = SubjectDisplayForm()
+        user = request.user
+        quizzes = self.get_quizzes_for_user(user) if not user.is_anonymous else []
+        context = {'form': form, 'info': info, 'quizzes': quizzes, 'user': user}
+        return render(request, 'webeducation/index.html', context)
+
+    def get_quizzes_for_user(self, user):
+        quizzes = []
+        if user.role == 'student':
+            for subject in user.student.subjects.all():
+                quizzes_for_subject = []
+                for quiz in subject.quiz_set.all():
+                    answered = QuizAnswer.objects.filter(student=user.student, quiz_question__quiz=quiz).exists()
+                    quizzes_for_subject.append({'quiz': quiz, 'answered': answered})
+                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+        elif user.role == 'teacher':
+            for subject in user.teacher.subjects.all():
+                quizzes_for_subject = []
+                for quiz in subject.quiz_set.all():
+                    quizzes_for_subject.append({'quiz': quiz})
+                quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
+        return quizzes

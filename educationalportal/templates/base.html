@@ -82,6 +82,7 @@
 
                 <p><a href="{% url 'create_quiz' %}" class="btn btn-outline-primary" style="background-color: #7a5a3b; color: white;">Add Test</a></p>
             {% elif user.role == 'student' %}
+
                 <table class="table table-striped">
 
                     <tbody>
@@ -95,11 +96,19 @@
                             </td>
                         </tr>
                         {% endfor %}
+
                     </tbody>
                 </table>
-                <h3><a>Another</a></h3>
-                <p><a>Content</a></p>
-                <a href="{% url 'find_teacher' %}" class="btn btn-primary">Find Teacher</a>
+                {% if student_quizzes %}
+                    <p><h4>You have Quiz</h4></p>
+                    <a href="{%url 'view_quizzes'%}" class="btn btn-success">Check quizzes</a>
+
+                {% else %}
+                    <p><h4>No quizzes available for your course.</h4></p>
+                {% endif %}
+
+                <p><a href="{% url 'find_teacher' %}" class="btn btn-primary">Find Teacher</a></p>
+
             {% endif %}
         {% else %}
             <p>Please log in to view subjects.</p>

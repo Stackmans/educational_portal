@@ -7,17 +7,17 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='home'),
-    path('register', views.RegisterView.as_view(), name='register'),
-    path('login', views.LoginView.as_view(), name='login'),
+    path('register/', views.RegisterView.as_view(), name='register'),
+    path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('account/', views.AccountInfo.as_view(), name='check_account'),
-    path('account/edit', views.AccountEditView.as_view(), name='edit_account'),
+    path('account/edit/', views.AccountEditView.as_view(), name='edit_account'),
     path('view_students/<int:subject_id>/', views.StudentsList.as_view(), name='view_students'),
 
     # path('view_teachers/<slug:subject_name>', views.TeachersListView.as_view(), name='view_teachers'),
     path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
 
-    path('requests', login_required(views.RequestsView.as_view()), name='requests'),
+    path('requests/', login_required(views.RequestsView.as_view()), name='requests'),
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),
     path('confirm_request/<int:request_id>/', views.confirm_request, name='confirm_request'),
     path('reject_request/<int:request_id>/', views.reject_request, name='reject_request'),
@@ -31,14 +31,14 @@ urlpatterns = [
     path('find_teacher/', views.FindTeacherView.as_view(), name='find_teacher'),
     path('add_task/', views.AddTaskView.as_view(), name='add_task'),
     path('delete_subject/', views.DeleteSubjectView.as_view(), name='delete_subject'),
-    path('delete', views.DeleteAccount.as_view(), name='delete_account'),
+    path('delete/', views.DeleteAccount.as_view(), name='delete_account'),
     path('select_course/', views.SelectCourseView.as_view(), name='select_course'),
     path('upload_photo/', views.UploadPhotoView.as_view(), name='upload_photo'),
     path('create_quiz/', views.CreateQuizView.as_view(), name='create_quiz'),
     path('solve_quiz/<int:subject_id>/<int:quiz_id>/', views.SolveQuizView.as_view(), name='solve_quiz'),
     path('submit_quiz/<int:quiz_id>/', views.QuizSubmissionView.as_view(), name='submit_quiz'),
     path('view_quiz/<int:subject_id>/<int:quiz_id>/', views.ViewQuiz.as_view(), name='view_quiz'),
-    path('view_quizzes', views.QuizzesView.as_view(), name='view_quizzes'),
+    path('view_quizzes/', views.QuizzesView.as_view(), name='view_quizzes'),
 
     # path('subject/<int:subject_id>/<int:quiz_id>/', views.SubjectQuizzesView.as_view(), name='subject_quizzes'),
 

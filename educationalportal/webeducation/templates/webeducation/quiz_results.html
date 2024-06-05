@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Quiz Results for {{ quiz.theme }}</h1>
+                <ul>
+                    {% for student_id, student_name in student_names.items %}
+                        {% with student_answer=student_answers.student_id %}
+                            <li>
+                                <p>Student Name: {{ student_name }}</p>
+                                <a href="{% url 'check_student_answer' student_id=student_id quiz_id=quiz.id %}">Check Student Answer</a>
+                            </li>
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+    <style>
+        .quiz-item {
+            background-color: #b59a7a;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+    </style>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ subject.name }} Quizzes</h1>
+
+                {% if user.is_authenticated %}
+                    {% if user.role == 'teacher' %}
+                        {% for course in courses %}
+                            <p><a class="btn btn-primary" style="background-color: #b59a7a;" href="{% url 'course_quizzes' subject_id=subject.id course_id=course.id %}">Course № {{ course.course_number }}</a></p>
+                        {% endfor %}
+                    {% elif user.role == 'student' %}
+                        {% if not has_teacher %}
+                            <div class="alert alert-warning" role="alert">
+                                <a href="{% url 'find_teacher' %}">Find teacher</a> to check tasks.
+                            </div>
+                        {% else %}
+                            {% if user.student.course %}
+                                <h2>Quizzes for Course {{ user.student.course.course_number }}</h2>
+                                <ul class="list-group">
+                                    {% for quiz in quizzes %}
+                                        {% if quiz.course_id == user.student.course_id %}
+                                            <li class="list-group-item quiz-item">
+                                                <a href="{% url 'view_quiz' subject_id=subject.id quiz_id=quiz.id %}">{{ quiz.name }}</a>
+                                                <p>{{ quiz.description }}</p>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-warning" role="alert">
+                                    <a href="{% url 'select_course' %}">Choose course</a> to check quizzes.
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        Please log in to check quizzes.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -40,6 +40,10 @@ urlpatterns = [
     path('view_quiz/<int:subject_id>/<int:quiz_id>/', views.ViewQuiz.as_view(), name='view_quiz'),
     path('view_quizzes/', views.QuizzesView.as_view(), name='view_quizzes'),
 
-    # path('subject/<int:subject_id>/<int:quiz_id>/', views.SubjectQuizzesView.as_view(), name='subject_quizzes'),
+    path('subject/<int:subject_id>/quizzes/', views.SubjectQuizzesView.as_view(), name='subject_quizzes'),
+    path('subject/<int:subject_id>/<int:course_id>/quizzes/', views.CourseQuizzesView.as_view(), name='course_quizzes'),
+
+    path('quiz_results/<int:quiz_id>/', views.QuizResultsView.as_view(), name='quiz_results'),
+    path('check_student_answer/<int:student_id>/<int:quiz_id>/', views.CheckStudentAnswerView.as_view(), name='check_student_answer'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

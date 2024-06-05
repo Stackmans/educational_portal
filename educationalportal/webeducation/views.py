@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q  # wtf
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -67,32 +68,6 @@ class IndexView(View):
             'info': info,
         }
         return render(request, 'webeducation/index.html', context)
-
-
-# class IndexView(View):
-#     def get(self, request):
-#         form = SubjectDisplayForm()
-#         user = request.user
-#         quizzes = self.get_quizzes_for_user(user) if not user.is_anonymous else []
-#         context = {'form': form, 'info': info, 'quizzes': quizzes, 'user': user}
-#         return render(request, 'webeducation/index.html', context)
-#
-#     def get_quizzes_for_user(self, user):
-#         quizzes = []
-#         if user.role == 'student':
-#             for subject in user.student.subjects.all():
-#                 quizzes_for_subject = []
-#                 for quiz in subject.quiz_set.all():
-#                     answered = QuizAnswer.objects.filter(student=user.student, quiz_question__quiz=quiz).exists()
-#                     quizzes_for_subject.append({'quiz': quiz, 'answered': answered})
-#                 quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
-#         elif user.role == 'teacher':
-#             for subject in user.teacher.subjects.all():
-#                 quizzes_for_subject = []
-#                 for quiz in subject.quiz_set.all():
-#                     quizzes_for_subject.append({'quiz': quiz})
-#                 quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
-#         return quizzes
 
 
 # try to create decorator to check for a student
@@ -528,30 +503,6 @@ class ViewQuiz(View):
         return render(request, 'webeducation/view_quiz.html', context)
 
 
-# class SubjectQuizzesView(View):
-#     def get(self, request, subject_id, quiz_id):
-#         subject = get_object_or_404(Subject, id=subject_id)
-#         quizzes = Quiz.objects.filter(subject=subject)
-#         courses = Course.objects.all()
-#         user = request.user
-#
-#         has_teacher = False
-#         if user.role == 'student':
-#             # Перевірка наявності підтвердженого запиту у студента для викладача з даного предмета
-#             has_teacher = SubjectRequest.objects.filter(student=user.student, subject=subject, is_confirmed=True
-#                                                         ).exists()
-#             if user.student.course:
-#                 quizzes = quizzes.filter(course_num=user.student.course)
-#         context = {
-#             'subject': subject,
-#             'quizzes': quizzes,
-#             'courses': courses,
-#             'has_teacher': has_teacher,
-#             'quiz_id': quiz_id,  # Додаємо quiz_id у контекст
-#         }
-#         return render(request, 'webeducation/subject_quizzes.html', context)
-
-
 class QuizzesView(View):
     def get(self, request):
         form = SubjectDisplayForm()
@@ -576,3 +527,47 @@ class QuizzesView(View):
                     quizzes_for_subject.append({'quiz': quiz})
                 quizzes.append({'subject': subject, 'quizzes': quizzes_for_subject})
         return quizzes
+
+
+class SubjectQuizzesView(View):
+    def get(self, request, subject_id):
+        courses = Course.objects.all()
+        subject = get_object_or_404(Subject, id=subject_id)
+        quizzes = Quiz.objects.filter(subject=subject)
+        context = {'subject': subject, 'quizzes': quizzes, 'courses': courses}
+        return render(request, 'webeducation/subject_quizzes.html', context)
+
+
+class CourseQuizzesView(View):
+    def get(self, request, subject_id, course_id):
+        subject = Subject.objects.get(pk=subject_id)
+        course = Course.objects.get(pk=course_id)
+        quizzes = Quiz.objects.filter(course=course.id, subject=subject)
+        return render(request, 'webeducation/course_quizzes.html', {'quizzes': quizzes,
+                                                                    'subject': subject,
+                                                                    'course': course})
+
+
+class QuizResultsView(View):
+    def get(self, request, quiz_id):
+        quiz = get_object_or_404(Quiz, pk=quiz_id)
+        quiz_answers = QuizAnswer.objects.filter(quiz_question__quiz=quiz).select_related('student')
+
+        students = set()
+        student_answers = {}
+        for answer in quiz_answers:
+            if answer.student_id not in students:
+                students.add(answer.student_id)
+                student_answers[answer.student_id] = answer
+
+        student_names = {student_id: Student.objects.get(id=student_id).user.username for student_id in students}
+
+        context = {'quiz': quiz, 'students': students, 'student_answers': student_answers, 'student_names': student_names}
+        return render(request, 'webeducation/quiz_results.html', context)
+
+
+class CheckStudentAnswerView(View):
+    def get(self, request, student_id, quiz_id):
+        student_answers = QuizAnswer.objects.filter(student_id=student_id, quiz_question__quiz_id=quiz_id)
+        context = {'student_answers': student_answers}
+        return render(request, 'webeducation/quiz_student_answer.html', context)

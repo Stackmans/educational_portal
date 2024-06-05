@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>{{ subject.name }} Quizzes</h1>
+
+                {% if user.is_authenticated %}
+                    {% if user.role == 'teacher' %}
+                        <ul class="list-group">
+                            {% for quiz in quizzes %}
+                                <li class="list-group-item quiz-item" style="background-color: #a38362;">
+                                    <a href="{% url 'quiz_results' quiz_id=quiz.id %}">{{ quiz.theme }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% elif user.role == 'student' %}
+                        <h1>why you here?</h1>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        Please log in to check quizzes.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

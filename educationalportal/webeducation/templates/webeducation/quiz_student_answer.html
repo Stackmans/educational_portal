@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Student Quiz Answers</h1>
+                <ul>
+                    {% for answer in student_answers %}
+                        <div class="card mt-4">
+                            <div class="card-body" style="background-color: #a38362;">
+                                <h3>Question: {{ answer.quiz_question.question_text }}</h3>
+                                <ul>
+                                    {% for option in answer.quiz_question.options.all %}
+                                        <li>
+                                            <input type="radio" id="option_{{ option.id }}" name="question_{{ answer.quiz_question.id }}" value="{{ option.id }}" {% if option == answer.chosen_option %}checked{% endif %} disabled>
+                                            <label for="option_{{ option.id }}" {% if option == answer.chosen_option %}style="color: {% if option.is_correct %}green;{% else %}red;{% endif %}"{% endif %}>
+                                                {{ option.text }}
+                                                {% if option == answer.chosen_option %}
+                                                    {% if option.is_correct %}
+                                                        (Correct)
+                                                    {% else %}
+                                                        (Incorrect)
+                                                    {% endif %}
+                                                {% endif %}
+                                            </label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No answers found for this student</p>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

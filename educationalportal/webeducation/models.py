@@ -125,4 +125,4 @@ class QuizAnswer(models.Model):
     # Поле для зберігання обраної відповіді
 
     def __str__(self):
-        return f"{self.student.user.username} - {self.quiz_question.question_text}"
+        return f"{self.student.user.get_full_name()} - {self.quiz_question.question_text}"

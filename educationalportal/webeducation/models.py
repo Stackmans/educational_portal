@@ -120,9 +120,8 @@ class QuizOption(models.Model):
 
 class QuizAnswer(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)  # Поле для зв'язку з питанням тесту
+    quiz_question = models.ForeignKey(QuizQuestion, on_delete=models.CASCADE)
     chosen_option = models.ForeignKey(QuizOption, on_delete=models.CASCADE, null=True, blank=True)
-    # Поле для зберігання обраної відповіді
 
     def __str__(self):
         return f"{self.student.user.get_full_name()} - {self.quiz_question.question_text}"

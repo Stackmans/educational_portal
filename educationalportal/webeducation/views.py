@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q  # wtf
-from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -476,22 +475,27 @@ class SolveQuizView(View):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         subject = get_object_or_404(Subject, pk=subject_id)
 
-        # Перевіряємо, чи користувач відповів на всі питання
+        # Перевірка, чи користувач вже відповів на всі питання
         if all(f'question_{question.id}' in request.POST for question in quiz.questions.all()):
-            # Створюємо або оновлюємо відповідь для кожного питання
-            for question in quiz.questions.all():
-                chosen_option_id = request.POST.get(f'question_{question.id}')
-                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
-                QuizAnswer.objects.update_or_create(
-                    student=request.user.student,
-                    quiz_question=question,
-                    defaults={'chosen_option': chosen_option}
-                )
+            # Перевірка, чи користувач ще не відповідав на ці питання раніше
+            user_answers = QuizAnswer.objects.filter(student=request.user.student, quiz_question__quiz=quiz)
+            if not user_answers.exists():
+                # Створення або оновлення відповіді для кожного питання
+                for question in quiz.questions.all():
+                    chosen_option_id = request.POST.get(f'question_{question.id}')
+                    chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
+                    QuizAnswer.objects.create(
+                        student=request.user.student,
+                        quiz_question=question,
+                        chosen_option=chosen_option
+                    )
 
-            messages.success(request, 'Your test saved successful')
-            return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
+                messages.success(request, 'Your test saved successful')
+                return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
+            else:
+                messages.warning(request, 'You have already answered this quiz.')
 
-        return redirect('check_account', quiz_id=quiz.id)
+        return redirect('check_account')
 
 
 class ViewQuiz(View):

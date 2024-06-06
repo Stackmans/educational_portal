@@ -13,7 +13,7 @@
                                 <h3>Question: {{ answer.quiz_question.question_text }}</h3>
                                 <ul>
                                     {% for option in answer.quiz_question.options.all %}
-                                        <li>
+                                        <p>
                                             <input type="radio" id="option_{{ option.id }}" name="question_{{ answer.quiz_question.id }}" value="{{ option.id }}" {% if option == answer.chosen_option %}checked{% endif %} disabled>
                                             <label for="option_{{ option.id }}" {% if option == answer.chosen_option %}style="color: {% if option.is_correct %}green;{% else %}red;{% endif %}"{% endif %}>
                                                 {{ option.text }}
@@ -25,7 +25,7 @@
                                                     {% endif %}
                                                 {% endif %}
                                             </label>
-                                        </li>
+                                        </p>
                                     {% endfor %}
                                 </ul>
                             </div>

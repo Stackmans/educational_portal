@@ -34,3 +34,5 @@ def save_quiz_answers(request, quiz_id):
                 quiz_question=question,
                 defaults={'chosen_option': chosen_option}
             )
+
+

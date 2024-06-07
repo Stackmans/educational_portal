@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q  # wtf
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -27,6 +28,7 @@ class UploadPhotoView(View):
         return render(request, 'webeducation/upload_photo.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class AccountInfo(View):
     def get(self, request):
         subjects = Subject.objects.all()
@@ -34,6 +36,7 @@ class AccountInfo(View):
         return render(request, 'webeducation/account_info.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class AccountEditView(View):
     def get(self, request):
         courses = Course.objects.all()
@@ -71,6 +74,7 @@ class IndexView(View):
 
 
 # try to create decorator to check for a student
+@method_decorator(login_required, name='dispatch')
 class TaskSolvingView(View):
     def get(self, request, subject_name, task_id):
         form = TaskSolutionForm()
@@ -134,6 +138,7 @@ class SubjectTasksView(View):
         return render(request, 'webeducation/subject_tasks.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class SubjectTeacherTasksView(View):
     def get(self, request, subject_id, course_id):
         subject = get_object_or_404(Subject, id=subject_id)
@@ -143,6 +148,7 @@ class SubjectTeacherTasksView(View):
         return render(request, 'webeducation/subject_teacher_tasks.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class SolutionsView(View):
     def get(self, request, subject_name, task_id):
         task = get_object_or_404(Task, id=task_id)
@@ -152,6 +158,7 @@ class SolutionsView(View):
         return render(request, 'webeducation/view_solutions.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class CheckSolutionView(View):
     def post(self, request, task_id, solution_id):
         solution = get_object_or_404(TaskSolution, id=solution_id)
@@ -166,6 +173,7 @@ class CheckSolutionView(View):
         return render(request, 'webeducation/view_solution.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class AddTaskView(View):
     def get(self, request):
         form = AddTaskForm()
@@ -181,6 +189,7 @@ class AddTaskView(View):
         return render(request, 'webeducation/add_task.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class GiveGradeView(View):
     def get(self, request, student_id, subject_id, task_id):
         student = get_object_or_404(Student, id=student_id)
@@ -218,6 +227,7 @@ def get_subjects(request):
         return render(request, 'webeducation/login.html')
 
 
+@method_decorator(login_required, name='dispatch')
 class AddSubjectToUserView(View):
     def post(self, request):
         subject_ids = request.POST.getlist('subject_id')
@@ -227,6 +237,7 @@ class AddSubjectToUserView(View):
         return redirect('check_account')
 
 
+@method_decorator(login_required, name='dispatch')
 class DeleteSubjectView(View):
     def get(self, request):
         return redirect('check_account')
@@ -244,6 +255,7 @@ class DeleteSubjectView(View):
         return redirect('check_account')
 
 
+@method_decorator(login_required, name='dispatch')
 class FindTeacherView(View):
     def get(self, request):
         user = request.user
@@ -260,34 +272,50 @@ class FindTeacherView(View):
         return render(request, 'webeducation/find_teacher.html', context)
 
 
-def view_teachers(request, subject_name):
-    subject = get_object_or_404(Subject, name=subject_name)
-    student = request.user.student
-
-    existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
-
-    context = {'subject': subject, 'existing_request': existing_request}
-    return render(request, 'webeducation/view_teachers.html', context)
-
-
-# class TeachersListView(View):  # what??
+# def view_teachers(request, subject_name):
+#     subject = get_object_or_404(Subject, name=subject_name)
+#     student = request.user.student
 #
-#     def get_context_data(self, request, *args, **kwargs):
-#         context = super().get_context_data(*args, **kwargs)
-#         context['user'] = request.user
-#         return context
+#     existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
 #
-#     @login_required
-#     def get(self, request, subject_name):
-#         subject = get_object_or_404(Subject, name=subject_name)
-#         context = self.get_context_data(request, subject_name=subject_name)
-#         return render(request, 'webeducation/view_teachers.html', context)
-#
-#     @login_required
-#     def post(self, request, subject_name):
-#         pass
+#     context = {'subject': subject, 'existing_request': existing_request}
+#     return render(request, 'webeducation/view_teachers.html', context)
 
 
+class ViewTeachers(LoginRequiredMixin, View):
+    def get(self, request, subject_name):
+        subject = get_object_or_404(Subject, name=subject_name)
+        student = request.user.student
+
+        existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
+
+        context = {'subject': subject, 'existing_request': existing_request}
+        return render(request, 'webeducation/view_teachers.html', context)
+
+    def post(self, request, subject_name):
+        subject = get_object_or_404(Subject, name=subject_name)
+        student = request.user.student
+
+        teacher_id = request.POST.get('teacher_id')
+        if teacher_id is not None:
+            teacher = get_object_or_404(Teacher, id=teacher_id)
+
+            # Перевірка наявності вже існуючого запиту
+            if SubjectRequest.objects.filter(student=student, subject=subject).exists():
+                messages.error(request, 'You have already sent a request for this subject.')
+            else:
+                # Створення нового запиту
+                new_request = SubjectRequest(student=student, subject=subject, teacher=teacher)
+                new_request.save()
+                messages.success(request, 'Request sent successfully.')
+                return redirect('check_account')
+        else:
+            messages.error(request, 'Teacher ID not provided.')
+
+        return redirect('view_teachers', subject_name=subject_name)
+
+
+@method_decorator(login_required, name='dispatch')
 class SelectCourseView(View):
     def get(self, request):
         courses = Course.objects.all()
@@ -301,6 +329,7 @@ class SelectCourseView(View):
         return redirect('check_account')
 
 
+@method_decorator(login_required, name='dispatch')
 class RequestsView(View):
     def get(self, request):
         requests = SubjectRequest.objects.filter(is_confirmed=False)
@@ -320,6 +349,8 @@ def reject_request(request, request_id):  # utils?
     return redirect('requests')
 
 
+# TODO get request
+@method_decorator(login_required, name='dispatch')
 class SendRequestView(View):
     def get(self, request):
         pass
@@ -405,6 +436,7 @@ class DeleteAccount(View):
             return render(request, 'webeducation/account_info.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class CreateQuizView(View):
     def get(self, request):
         form = QuizForm()
@@ -449,6 +481,7 @@ class CreateQuizView(View):
         return render(request, 'webeducation/create_test.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class QuizSubmissionView(View):
     def post(self, request, quiz_id):
         quiz = Quiz.objects.get(id=quiz_id)
@@ -465,6 +498,7 @@ class QuizSubmissionView(View):
         return redirect('check_account')
 
 
+@method_decorator(login_required, name='dispatch')
 class SolveQuizView(View):
     def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -498,6 +532,7 @@ class SolveQuizView(View):
             return redirect('check_account')
 
 
+@method_decorator(login_required, name='dispatch')
 class ViewQuiz(View):
     def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -507,6 +542,7 @@ class ViewQuiz(View):
         return render(request, 'webeducation/view_quiz.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class QuizzesView(View):
     def get(self, request):
         form = SubjectDisplayForm()
@@ -533,6 +569,7 @@ class QuizzesView(View):
         return quizzes
 
 
+@method_decorator(login_required, name='dispatch')
 class SubjectQuizzesView(View):
     def get(self, request, subject_id):
         courses = Course.objects.all()
@@ -542,6 +579,7 @@ class SubjectQuizzesView(View):
         return render(request, 'webeducation/subject_quizzes.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class CourseQuizzesView(View):
     def get(self, request, subject_id, course_id):
         subject = Subject.objects.get(pk=subject_id)
@@ -552,6 +590,7 @@ class CourseQuizzesView(View):
                                                                     'course': course})
 
 
+@method_decorator(login_required, name='dispatch')
 class QuizResultsView(View):
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -570,6 +609,7 @@ class QuizResultsView(View):
         return render(request, 'webeducation/quiz_results.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class CheckStudentAnswerView(View):
     def get(self, request, student_id, quiz_id):
         student_answers = QuizAnswer.objects.filter(student_id=student_id, quiz_question__quiz_id=quiz_id)

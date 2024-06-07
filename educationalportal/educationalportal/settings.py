@@ -57,8 +57,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'webeducation.context_processors.unconfirmed_requests',
-                'webeducation.context_processors.check_student_quizzes',
+                'webeducation.context_processors.unconfirmed_requests',  # added
+                'webeducation.context_processors.check_student_quizzes',  # added
 
             ],
         },
@@ -127,6 +127,8 @@ STATICFILES_DIRS = [
 ]
 
 LOGOUT_REDIRECT_URL = 'home'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'home'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

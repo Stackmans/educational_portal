@@ -10,7 +10,7 @@
                 <tr>
                     <td>{{ teacher.user.first_name }} {{ teacher.user.last_name }}</td>
                     <td>
-                        <form method="POST" action="{% url 'send_request' %}">
+                        <form method="POST" action="{% url 'view_teachers' subject.name %}">
                             {% csrf_token %}
                             <input type="hidden" name="teacher_id" value="{{ teacher.id }}">
                             <input type="hidden" name="subject_id" value="{{ subject.id }}">

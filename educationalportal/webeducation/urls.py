@@ -14,8 +14,8 @@ urlpatterns = [
     path('account/edit/', views.AccountEditView.as_view(), name='edit_account'),
     path('view_students/<int:subject_id>/', views.StudentsList.as_view(), name='view_students'),
 
-    # path('view_teachers/<slug:subject_name>', views.TeachersListView.as_view(), name='view_teachers'),
-    path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
+    # path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),
+    path('view_teachers/<slug:subject_name>/', views.ViewTeachers.as_view(), name='view_teachers'),
 
     path('requests/', login_required(views.RequestsView.as_view()), name='requests'),
     path('send_request/', views.SendRequestView.as_view(), name='send_request'),

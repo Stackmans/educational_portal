@@ -473,7 +473,7 @@ class SolveQuizView(View):
         # Встановлюємо quiz_end_time у сесії, якщо він ще не встановлений
         if 'quiz_end_time' not in request.session:
             quiz_duration = quiz.time_limit  # Припускаючи, що quiz.time_limit вказаний в секундах
-            end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
+            end_time = timezone.now() + timezone.timedelta(minutes=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
         context = {'quiz': quiz, 'subject': subject, 'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}

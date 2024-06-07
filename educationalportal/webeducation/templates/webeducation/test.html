@@ -10,14 +10,45 @@
             document.getElementById("timer").innerHTML = "Час вийшов!";
             document.getElementById("quizForm").submit();  // Автоматичне відправлення форми при закінченні часу
         } else {
-            document.getElementById("timer").innerHTML = timeLeft + " с";
-            timeLeft -= 1;
+            var hours = Math.floor(timeLeft / 3600);  // Кількість годин у часі
+            var minutes = Math.floor((timeLeft % 3600) / 60);  // Кількість хвилин у часі
+            var seconds = Math.floor(timeLeft % 60);  // Кількість секунд у часі
+            var formattedTime = ("0" + hours).slice(-2) + ":" +
+                                ("0" + minutes).slice(-2) + ":" +
+                                ("0" + seconds).slice(-2);
+            document.getElementById("timer").innerHTML = formattedTime;
+            timeLeft--;  // Зменшення часу на одну секунду
+            timeLeft = Math.max(0, timeLeft); // Щоб уникнути від'ємного часу
         }
-    }, 1000);
+    }, 1000); // 1000 мілісекунд = 1 секунда
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Відновлення вибору з localStorage
+        const savedAnswers = JSON.parse(localStorage.getItem('quizAnswers')) || {};
+        for (const [questionId, optionId] of Object.entries(savedAnswers)) {
+            const radio = document.getElementById(`option_${optionId}`);
+            if (radio) {
+                radio.checked = true;
+            }
+        }
+
+        // Збереження вибору в localStorage
+        const radios = document.querySelectorAll('input[type="radio"]');
+        radios.forEach((radio) => {
+            radio.addEventListener('change', (event) => {
+                const questionId = event.target.name.split('_')[1];
+                const optionId = event.target.value;
+                savedAnswers[questionId] = optionId;
+                localStorage.setItem('quizAnswers', JSON.stringify(savedAnswers));
+            });
+        });
+    });
 </script>
 
 <form id="quizForm" method="POST" action="{% url 'solve_quiz' subject.id quiz.id %}">
-
+<span id="timer"></span>
     {% csrf_token %}
     {% for question in quiz.questions.all %}
     <div class="card mt-4" >
@@ -34,7 +65,8 @@
         </div>
     </div>
     {% endfor %}
-    <span id="timer"></span>
+
     <button type="submit">Submit</button>
+
 </form>
 {% endblock %}

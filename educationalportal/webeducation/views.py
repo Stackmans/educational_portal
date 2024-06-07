@@ -11,7 +11,7 @@ from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, Phot
     CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
     QuizQuestion, QuizOption, QuizAnswer
-from .utils import add_subject
+from .utils import add_subject, save_quiz_answers
 
 info = {
     'title': 'Enlighten me'
@@ -465,22 +465,6 @@ class QuizSubmissionView(View):
         return redirect('check_account')
 
 
-def save_quiz_answers(request, quiz_id):
-    quiz = get_object_or_404(Quiz, pk=quiz_id)
-    if request.method == 'POST':
-        for question in quiz.questions.all():
-            chosen_option_id = request.POST.get(f'question_{question.id}')
-            if chosen_option_id:
-                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
-            else:
-                chosen_option = None  # або можна просто пропустити збереження, якщо нічого не обрано
-            QuizAnswer.objects.update_or_create(
-                student=request.user.student,
-                quiz_question=question,
-                defaults={'chosen_option': chosen_option}
-            )
-
-
 class SolveQuizView(View):
     def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -512,7 +496,6 @@ class SolveQuizView(View):
             messages.success(request, 'Your test saved automatically')
             del request.session['quiz_end_time']  # ?
             return redirect('check_account')
-
 
 
 class ViewQuiz(View):

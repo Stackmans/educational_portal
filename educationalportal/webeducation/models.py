@@ -93,7 +93,7 @@ class Quiz(models.Model):
     course = models.IntegerField(choices=[(i, str(i)) for i in range(1, 7)])
     theme = models.CharField(max_length=200)
     description = models.TextField()
-    time_limit = models.IntegerField(default=30, validators=[MinValueValidator(1)])
+    time_limit = models.IntegerField(default=30, validators=[MinValueValidator(1), MaxValueValidator(120)])
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

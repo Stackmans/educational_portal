@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Q  # wtf
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
@@ -464,38 +465,66 @@ class QuizSubmissionView(View):
         return redirect('check_account')
 
 
+def save_quiz_answers(request, quiz_id):
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
+    if request.method == 'POST':
+        for question in quiz.questions.all():
+            chosen_option_id = request.POST.get(f'question_{question.id}')
+            if chosen_option_id:
+                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
+            else:
+                chosen_option = None  # або можна просто пропустити збереження, якщо нічого не обрано
+            QuizAnswer.objects.update_or_create(
+                student=request.user.student,
+                quiz_question=question,
+                defaults={'chosen_option': chosen_option}
+            )
+
+
 class SolveQuizView(View):
     def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         subject = get_object_or_404(Subject, pk=subject_id)
-        context = {'quiz': quiz, 'subject': subject}
+
+        # Встановлюємо quiz_end_time у сесії, якщо він ще не встановлений
+        if 'quiz_end_time' not in request.session:
+            quiz_duration = quiz.time_limit  # Припускаючи, що quiz.time_limit вказаний в секундах
+            end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
+            request.session['quiz_end_time'] = end_time.timestamp()
+
+        context = {'quiz': quiz, 'subject': subject, 'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}
         return render(request, 'webeducation/test.html', context)
 
     def post(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         subject = get_object_or_404(Subject, pk=subject_id)
 
-        # Перевірка, чи користувач вже відповів на всі питання
-        if all(f'question_{question.id}' in request.POST for question in quiz.questions.all()):
-            # Перевірка, чи користувач ще не відповідав на ці питання раніше
-            user_answers = QuizAnswer.objects.filter(student=request.user.student, quiz_question__quiz=quiz)
-            if not user_answers.exists():
-                # Створення або оновлення відповіді для кожного питання
-                for question in quiz.questions.all():
-                    chosen_option_id = request.POST.get(f'question_{question.id}')
-                    chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
-                    QuizAnswer.objects.create(
-                        student=request.user.student,
-                        quiz_question=question,
-                        chosen_option=chosen_option
-                    )
+        # Перевіряємо, чи quiz_end_time встановлено у сесії і розраховуємо time_left
+        if 'quiz_end_time' in request.session:
+            time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
+            del request.session['quiz_end_time']  # Видаляємо quiz_end_time з сесії після відправки тесту
 
-                messages.success(request, 'Your test saved successful')
-                return redirect('check_account')  # Перенаправлення на сторінку з підтвердженням успішного подачі тесту
-            else:
-                messages.warning(request, 'You have already answered this quiz.')
+            # Створюємо або оновлюємо відповіді для кожного питання
+            for question in quiz.questions.all():
+                chosen_option_id = request.POST.get(f'question_{question.id}')
+                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
+                QuizAnswer.objects.update_or_create(
+                    student=request.user.student,
+                    quiz_question=question,
+                    defaults={'chosen_option': chosen_option}
+                )
 
-        return redirect('check_account')
+            save_quiz_answers(request, quiz_id)
+            messages.success(request, 'Your test saved successfully')
+            return redirect('check_account')  # Перенаправлення на сторінку підтвердження
+        else:
+            save_quiz_answers(request, quiz_id)
+            messages.success(request, 'So bad')
+            return redirect('check_account')
+
+        # Обробляємо помилку через відсутність quiz_end_time
+        messages.error(request, 'Some problems with test saving')
+        return redirect('check_account')  # Перенаправлення на відповідну сторінку
 
 
 class ViewQuiz(View):

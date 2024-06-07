@@ -74,8 +74,8 @@ class QuizForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['theme'].label = 'Quiz Title'
         self.fields['time_limit'].label = 'Time Limit (minutes)'
-        self.fields['time_limit'].widget.attrs['min'] = 5
-        self.fields['time_limit'].widget.attrs['max'] = 60
+        self.fields['time_limit'].widget.attrs['min'] = 1
+        self.fields['time_limit'].widget.attrs['max'] = 120
 
 
 class QuizQuestionForm(forms.ModelForm):

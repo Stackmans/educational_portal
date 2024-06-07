@@ -26,7 +26,7 @@
             <ul>
                 {% for option in question.options.all %}
                 <li>
-                    <input type="radio" id="option_{{ option.id }}" name="question_{{ question.id }}" value="{{ option.id }}">
+                    <input type="radio" id="option_{{ option.id }}" name="question_{{ question.id }}" value="{{ option.id }}" required>
                     <label for="option_{{ option.id }}">{{ option.text }}</label>
                 </li>
                 {% endfor %}

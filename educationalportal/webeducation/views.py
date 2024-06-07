@@ -504,22 +504,12 @@ class SolveQuizView(View):
             time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
             del request.session['quiz_end_time']  # Видаляємо quiz_end_time з сесії після відправки тесту
 
-            # Створюємо або оновлюємо відповіді для кожного питання
-            for question in quiz.questions.all():
-                chosen_option_id = request.POST.get(f'question_{question.id}')
-                chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
-                QuizAnswer.objects.update_or_create(
-                    student=request.user.student,
-                    quiz_question=question,
-                    defaults={'chosen_option': chosen_option}
-                )
-
             save_quiz_answers(request, quiz_id)
-            messages.success(request, 'Your test saved successfully')
+            messages.success(request, 'Your test saved automatically')
             return redirect('check_account')  # Перенаправлення на сторінку підтвердження
         else:
             save_quiz_answers(request, quiz_id)
-            messages.success(request, 'So bad')
+            messages.success(request, 'Your test saved successfully')
             return redirect('check_account')
 
         # Обробляємо помилку через відсутність quiz_end_time

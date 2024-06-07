@@ -502,19 +502,17 @@ class SolveQuizView(View):
         # Перевіряємо, чи quiz_end_time встановлено у сесії і розраховуємо time_left
         if 'quiz_end_time' in request.session:
             time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
-            del request.session['quiz_end_time']  # Видаляємо quiz_end_time з сесії після відправки тесту
 
-            save_quiz_answers(request, quiz_id)
-            messages.success(request, 'Your test saved automatically')
-            return redirect('check_account')  # Перенаправлення на сторінку підтвердження
-        else:
             save_quiz_answers(request, quiz_id)
             messages.success(request, 'Your test saved successfully')
+            del request.session['quiz_end_time']  # ?
+            return redirect('check_account')
+        else:
+            save_quiz_answers(request, quiz_id)
+            messages.success(request, 'Your test saved automatically')
+            del request.session['quiz_end_time']  # ?
             return redirect('check_account')
 
-        # Обробляємо помилку через відсутність quiz_end_time
-        messages.error(request, 'Some problems with test saving')
-        return redirect('check_account')  # Перенаправлення на відповідну сторінку
 
 
 class ViewQuiz(View):

@@ -87,6 +87,20 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
+class TeacherProfileView(View):
+    def get(self, request, teacher_id):
+        teacher = get_object_or_404(Teacher, id=teacher_id)
+        context = {'teacher': teacher}
+        return render(request, 'webeducation/teacher_profile.html', context)
+
+
+class StudentProfileView(View):
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        context = {'student': student}
+        return render(request, 'webeducation/student_profile.html', context)
+
+
 class IndexView(View):
     def get(self, request):
         form = SubjectDisplayForm()
@@ -316,13 +330,7 @@ class FindTeacherView(View):
         return render(request, 'webeducation/find_teacher.html', context)
 
 
-class StudentProfileView(View):
-    def get(self, request, student_id):
-        student = get_object_or_404(Student, id=student_id)
-        context = {'student': student}
-        return render(request, 'webeducation/student_profile.html', context)
-
-
+@method_decorator(login_required, name='dispatch')
 class ViewTeachers(LoginRequiredMixin, View):
     def get(self, request, subject_name):
         subject = get_object_or_404(Subject, name=subject_name)

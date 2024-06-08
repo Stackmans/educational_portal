@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
-    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
+    CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
     QuizQuestion, QuizOption, QuizAnswer, StudentSubjectPoints
 from .utils import add_subject, save_quiz_answers
@@ -51,23 +51,8 @@ class AccountEditView(View):
         form = CustomUserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('check_account')  # Перенаправлення на успішну сторінку
+            return redirect('check_account')
         return render(request, 'webeducation/account_edit.html', {'form': form})
-
-
-# class CheckMyPointsView(View):
-#     def get(self, request):
-#         student = request.user.student
-#         subjects = student.subjects.all()
-#         subject_points = []
-#
-#         for subject in subjects:
-#             points = student.studentsubjectpoints_set.filter(subject=subject).first()
-#             subject_points.append({'subject': subject, 'points': points.points if points else 0})
-#
-#         context = {'subject_points': subject_points}
-#
-#         return render(request, 'webeducation/check_my_points.html', context)
 
 
 class CheckMyPointsView(View):
@@ -85,7 +70,8 @@ class CheckMyPointsView(View):
                 task = point.task
                 points_with_tasks.append({'task': task, 'points': point.points})
 
-            subject_points.append({'subject': subject, 'points_with_tasks': points_with_tasks, 'total_points': total_points})
+            subject_points.append({'subject': subject, 'points_with_tasks': points_with_tasks,
+                                   'total_points': total_points})
 
         context = {'subject_points': subject_points}
         return render(request, 'webeducation/check_my_points.html', context)
@@ -250,7 +236,8 @@ class GiveGradeView(View):
         subject = get_object_or_404(Subject, id=subject_id)
         task = get_object_or_404(Task, id=task_id)
         form = StudentSubjectPointsFrom(initial={'student': student, 'subject': subject, 'task': task})
-        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student, 'subject': subject, 'task': task})
+        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student,
+                                                                'subject': subject, 'task': task})
 
     def post(self, request, student_id, subject_id, task_id):
         student = get_object_or_404(Student, id=student_id)
@@ -265,7 +252,8 @@ class GiveGradeView(View):
             instance.save()
             messages.success(request, 'You have successfully submitted a grade.')
             return redirect('check_account')
-        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student, 'subject': subject, 'task': task})
+        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student,
+                                                                'subject': subject, 'task': task})
 
 
 def get_subjects(request):
@@ -315,7 +303,7 @@ class FindTeacherView(View):
         user = request.user
         subjects_with_teacher = []
         if user.is_authenticated and user.role == 'student':
-            # Отримати всі запити, незалежно від того, підтверджені вони чи ні
+
             subjects_with_teacher = SubjectRequest.objects.filter(
                 student=user.student
             ).values_list('subject_id', flat=True)
@@ -405,7 +393,8 @@ class SendRequestView(View):
         subject_id = request.POST.get('subject_id')
         student = request.user.student
 
-        existing_request = SubjectRequest.objects.filter(student=student, teacher_id=teacher_id, subject_id=subject_id).first()
+        existing_request = SubjectRequest.objects.filter(student=student, teacher_id=teacher_id,
+                                                         subject_id=subject_id).first()
         if existing_request:
             messages.warning(request, 'You have already sent a request to this teacher for this subject.')
         else:
@@ -518,8 +507,9 @@ class CreateQuizView(View):
                     for option_text, is_correct in options.items():
                         # Використання відповідного тексту для кожного варіанту
                         text = texts[option_text]
-                        is_correct = True if option_text == request.POST.get(f'correct_option_{key.split("_")[1]}') else False
-                        QuizOption.objects.create(question=question, option_text=option_text, text=text, is_correct=is_correct)
+                        is_correct = True if option_text == request.POST.get(f'correct_option_{key.split("_")[1]}')else False
+                        QuizOption.objects.create(question=question, option_text=option_text,
+                                                  text=text, is_correct=is_correct)
 
             messages.success(request, 'Test saved successfully.')
             return redirect('check_account')
@@ -555,7 +545,8 @@ class SolveQuizView(View):
             end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
-        context = {'quiz': quiz, 'subject': subject, 'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}
+        context = {'quiz': quiz, 'subject': subject,
+                   'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}
         return render(request, 'webeducation/test.html', context)
 
     def post(self, request, quiz_id, subject_id):
@@ -652,7 +643,8 @@ class QuizResultsView(View):
 
         student_names = {student_id: Student.objects.get(id=student_id).user.username for student_id in students}
 
-        context = {'quiz': quiz, 'students': students, 'student_answers': student_answers, 'student_names': student_names}
+        context = {'quiz': quiz, 'students': students,
+                   'student_answers': student_answers, 'student_names': student_names}
         return render(request, 'webeducation/quiz_results.html', context)
 
 

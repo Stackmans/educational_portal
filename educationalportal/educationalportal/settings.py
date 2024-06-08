@@ -74,9 +74,9 @@ WSGI_APPLICATION = 'educationalportal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD'),
+        'NAME': config('NAME'),  # fixed
+        'USER': config('USER'),  # fixed
+        'PASSWORD': config('PASSWORD'),  # fixed
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -401,7 +401,6 @@ def reject_request(request, request_id):  # utils?
     return redirect('requests')
 
 
-# TODO get request
 @method_decorator(login_required, name='dispatch')
 class SendRequestView(View):
     def post(self, request):

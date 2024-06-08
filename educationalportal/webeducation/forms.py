@@ -14,9 +14,15 @@ class PhotoUploadForm(forms.ModelForm):
         fields = ['photo']
 
 
-class RegisterUserForm(UserCreationForm):
-    role = forms.ChoiceField(choices=[('student', 'Student'), ('teacher', 'Teacher')])
+# class RegisterUserForm(UserCreationForm):
+#     role = forms.ChoiceField(choices=[('student', 'Student'), ('teacher', 'Teacher')])
+#
+#     class Meta:
+#         model = CustomUser
+#         fields = ('username', 'role', 'first_name', 'last_name', 'email', 'password1', 'password2')
 
+
+class RegisterUserForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ('username', 'role', 'first_name', 'last_name', 'email', 'password1', 'password2')

@@ -14,17 +14,16 @@ def unconfirmed_requests(request):
     return {'has_unconfirmed_requests': has_unconfirmed_requests}
 
 
-# def check_student_quizzes(request):
-#     student_course = get_object_or_404(Course, id=request.user.student.course.id)
-#     student_quizzes = Quiz.objects.filter(course=student_course.id)
-#     return {'student_quizzes': student_quizzes}
-
-
 # hasattr?
 def check_student_quizzes(request):
-    if request.user.is_authenticated and hasattr(request.user, 'student') and hasattr(request.user.student, 'course'):
-        student_course = get_object_or_404(Course, id=request.user.student.course.id)
-        student_quizzes = Quiz.objects.filter(course=student_course.id)
+    if request.user.is_authenticated and hasattr(request.user, 'student'):
+        student = request.user.student
+        if student.course:
+            student_course = get_object_or_404(Course, id=student.course.id)
+            # Додайте необхідну логіку для перевірки студентських вікторин
+        else:
+            student_course = None
     else:
-        student_quizzes = None
-    return {'student_quizzes': student_quizzes}
+        student_course = None
+
+    return {'student_course': student_course}

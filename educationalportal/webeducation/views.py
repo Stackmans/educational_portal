@@ -404,9 +404,6 @@ def reject_request(request, request_id):  # utils?
 # TODO get request
 @method_decorator(login_required, name='dispatch')
 class SendRequestView(View):
-    def get(self, request):
-        pass
-
     def post(self, request):
         teacher_id = request.POST.get('teacher_id')
         subject_id = request.POST.get('subject_id')
@@ -559,7 +556,7 @@ class SolveQuizView(View):
         # Встановлюємо quiz_end_time у сесії, якщо він ще не встановлений
         if 'quiz_end_time' not in request.session:
             quiz_duration = quiz.time_limit  # Припускаючи, що quiz.time_limit вказаний в секундах
-            end_time = timezone.now() + timezone.timedelta(minutes=quiz_duration)
+            end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
         context = {'quiz': quiz, 'subject': subject, 'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}
@@ -574,13 +571,15 @@ class SolveQuizView(View):
             time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
 
             save_quiz_answers(request, quiz_id)
-            messages.success(request, 'Your test saved successfully')
+            if time_left == 0:
+                messages.success(request, 'Your test saved automatically')
+            else:
+                messages.success(request, 'Your test saved successfully')
             del request.session['quiz_end_time']  # ?
             return redirect('check_account')
         else:
             save_quiz_answers(request, quiz_id)
             messages.success(request, 'Your test saved automatically')
-            del request.session['quiz_end_time']  # ?
             return redirect('check_account')
 
 

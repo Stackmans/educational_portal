@@ -14,6 +14,7 @@ from .models import CustomUser, Teacher, Student, Subject, Course, SubjectReques
     QuizQuestion, QuizOption, QuizAnswer, StudentSubjectPoints
 from .utils import add_subject, save_quiz_answers
 
+#  !!????
 info = {
     'title': 'Enlighten me'
 }
@@ -55,6 +56,7 @@ class AccountEditView(View):
         return render(request, 'webeducation/account_edit.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class CheckMyPointsView(View):
     def get(self, request):
         student = request.user.student
@@ -476,6 +478,7 @@ class CreateQuizView(View):
         form = QuizForm()
         return render(request, 'webeducation/create_test.html', {'form': form})
 
+    #  !!!???
     def post(self, request):
         form = QuizForm(request.POST)
         if form.is_valid():
@@ -553,7 +556,6 @@ class SolveQuizView(View):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         subject = get_object_or_404(Subject, pk=subject_id)
 
-        # Перевіряємо, чи quiz_end_time встановлено у сесії і розраховуємо time_left
         if 'quiz_end_time' in request.session:
             time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
 
@@ -580,6 +582,7 @@ class ViewQuiz(View):
         return render(request, 'webeducation/view_quiz.html', context)
 
 
+#  get_quizzes_for_user  ???!!!!!!!!!!!
 @method_decorator(login_required, name='dispatch')
 class QuizzesView(View):
     def get(self, request):

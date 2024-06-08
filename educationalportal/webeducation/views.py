@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q  # wtf
+from django.db.models import Q, Sum  # wtf
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -78,7 +78,14 @@ class CheckMyPointsView(View):
 
         for subject in subjects:
             points = student.studentsubjectpoints_set.filter(subject=subject)
-            subject_points.append({'subject': subject, 'points': points})
+            total_points = points.aggregate(total=Sum('points'))['total'] or 0
+            points_with_tasks = []
+
+            for point in points:
+                task = point.task
+                points_with_tasks.append({'task': task, 'points': point.points})
+
+            subject_points.append({'subject': subject, 'points_with_tasks': points_with_tasks, 'total_points': total_points})
 
         context = {'subject_points': subject_points}
         return render(request, 'webeducation/check_my_points.html', context)

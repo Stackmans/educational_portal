@@ -5,14 +5,15 @@
 <h2>Your subjects:</h2>
 <ul class="list-group">
     {% for sp in subject_points %}
-    <li class="list-group-item"  style="background-color: #b59a7a;">
+    <li class="list-group-item" style="background-color: #b59a7a;">
         <h4>{{ sp.subject.name }}</h4>
-        {% if sp.points %}
+        {% if sp.points_with_tasks %}
             <ul>
-                {% for point in sp.points %}
-                <li>Points: {{ point.points }}</li>
+                {% for pwt in sp.points_with_tasks %}
+                <li>Points: {{ pwt.points }} for task: {{ pwt.task.theme }}</li>
                 {% endfor %}
             </ul>
+            <p><strong>Total Points: {{ sp.total_points }}</strong></p>
         {% else %}
             <p>No points available</p>
         {% endif %}

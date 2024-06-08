@@ -46,7 +46,7 @@
 <div class="row mb-4">
     <div class="col-md-6">
         {% if user.role == 'student' %}
-            <h4><a href="{% url 'check_my_points' %}">check my points</a></h4>
+            <p><h4><a href="{% url 'check_my_points' %}">check my subject points</a></h4></p>
         {% endif %}
 
         <form method="post" action="{% url 'add_subject_to_user' %}">

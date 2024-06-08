@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+<h2>Your subjects:</h2>
+<ul class="list-group">
+    {% for sp in subject_points %}
+    <li class="list-group-item"  style="background-color: #b59a7a;">
+        <h4>{{ sp.subject.name }}</h4>
+        {% if sp.points %}
+            <ul>
+                {% for point in sp.points %}
+                <li>Points: {{ point.points }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No points available</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

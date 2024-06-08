@@ -55,6 +55,35 @@ class AccountEditView(View):
         return render(request, 'webeducation/account_edit.html', {'form': form})
 
 
+# class CheckMyPointsView(View):
+#     def get(self, request):
+#         student = request.user.student
+#         subjects = student.subjects.all()
+#         subject_points = []
+#
+#         for subject in subjects:
+#             points = student.studentsubjectpoints_set.filter(subject=subject).first()
+#             subject_points.append({'subject': subject, 'points': points.points if points else 0})
+#
+#         context = {'subject_points': subject_points}
+#
+#         return render(request, 'webeducation/check_my_points.html', context)
+
+
+class CheckMyPointsView(View):
+    def get(self, request):
+        student = request.user.student
+        subjects = student.subjects.all()
+        subject_points = []
+
+        for subject in subjects:
+            points = student.studentsubjectpoints_set.filter(subject=subject)
+            subject_points.append({'subject': subject, 'points': points})
+
+        context = {'subject_points': subject_points}
+        return render(request, 'webeducation/check_my_points.html', context)
+
+
 class StudentsList(View):
     def get(self, request, subject_id):
         subject = Subject.objects.get(id=subject_id)

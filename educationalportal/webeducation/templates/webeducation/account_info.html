@@ -45,6 +45,10 @@
 
 <div class="row mb-4">
     <div class="col-md-6">
+        {% if user.role == 'student' %}
+            <h4><a href="{% url 'check_my_points' %}">check my points</a></h4>
+        {% endif %}
+
         <form method="post" action="{% url 'add_subject_to_user' %}">
             {% csrf_token %}
             <div class="form-group">

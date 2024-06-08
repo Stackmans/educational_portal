@@ -12,6 +12,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('account/', views.AccountInfo.as_view(), name='check_account'),
     path('account/edit/', views.AccountEditView.as_view(), name='edit_account'),
+    path('check_my_points/', views.CheckMyPointsView.as_view(), name='check_my_points'),
     path('view_students/<int:subject_id>/', views.StudentsList.as_view(), name='view_students'),
 
     # path('view_teachers/<slug:subject_name>', views.view_teachers, name='view_teachers'),

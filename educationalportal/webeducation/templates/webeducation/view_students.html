@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block main_content %}
     <div class="container">
         <h1>Students who learn {{ subject.name }}</h1>
@@ -10,9 +9,10 @@
                 {% for request in subject.subjectrequest_set.all %}
                     {% if request.is_confirmed %}
                         <tr>
-                            <td>{{ request.student.user.first_name }} {{ request.student.user.last_name }}</td>
                             <td>
-                                <!-- Якщо ви хочете додати кнопки аналогічно викладачам, можете вставити форму тут -->
+                                <a href="{% url 'student_profile' request.student.id %}">
+                                    {{ request.student.user.first_name }} {{ request.student.user.last_name }}
+                                </a>
                             </td>
                         </tr>
                     {% endif %}

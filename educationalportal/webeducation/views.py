@@ -326,14 +326,11 @@ class FindTeacherView(View):
         return render(request, 'webeducation/find_teacher.html', context)
 
 
-# def view_teachers(request, subject_name):
-#     subject = get_object_or_404(Subject, name=subject_name)
-#     student = request.user.student
-#
-#     existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
-#
-#     context = {'subject': subject, 'existing_request': existing_request}
-#     return render(request, 'webeducation/view_teachers.html', context)
+class StudentProfileView(View):
+    def get(self, request, student_id):
+        student = get_object_or_404(Student, id=student_id)
+        context = {'student': student}
+        return render(request, 'webeducation/student_profile.html', context)
 
 
 class ViewTeachers(LoginRequiredMixin, View):
@@ -555,7 +552,7 @@ class SolveQuizView(View):
         # Встановлюємо quiz_end_time у сесії, якщо він ще не встановлений
         if 'quiz_end_time' not in request.session:
             quiz_duration = quiz.time_limit  # Припускаючи, що quiz.time_limit вказаний в секундах
-            end_time = timezone.now() + timezone.timedelta(minutes=quiz_duration)
+            end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
         context = {'quiz': quiz, 'subject': subject, 'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}

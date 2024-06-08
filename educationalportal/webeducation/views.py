@@ -11,7 +11,7 @@ from django.views import View
 from .forms import RegisterUserForm, SubjectDisplayForm, DeleteAccountForm, PhotoUploadForm, AddTaskForm, \
     CustomUserChangeForm, TaskSolutionForm, StudentSubjectPointsFrom, QuizForm, QuizQuestionForm, QuizOptionForm
 from .models import CustomUser, Teacher, Student, Subject, Course, SubjectRequest, Task, TaskSolution, Quiz, \
-    QuizQuestion, QuizOption, QuizAnswer
+    QuizQuestion, QuizOption, QuizAnswer, StudentSubjectPoints
 from .utils import add_subject, save_quiz_answers
 
 info = {
@@ -160,16 +160,34 @@ class SolutionsView(View):
 
 @method_decorator(login_required, name='dispatch')
 class CheckSolutionView(View):
+    # def get(self, request, task_id, solution_id):
+    #     solution = get_object_or_404(TaskSolution, id=solution_id)
+    #     task = get_object_or_404(Task, id=task_id)
+    #     solutions = TaskSolution.objects.filter(task=task)
+    #     points = StudentSubjectPoints.objects.filter(student=solution.student, task=task).first()
+    #
+    #     context = {
+    #         'task': task,
+    #         'solutions': solutions,
+    #         'solution': solution,
+    #         'subject': task.subject,
+    #         'points': points
+    #     }
+    #     return render(request, 'webeducation/view_solution.html', context)
     def post(self, request, task_id, solution_id):
+
         solution = get_object_or_404(TaskSolution, id=solution_id)
         task = get_object_or_404(Task, id=task_id)
         solutions = TaskSolution.objects.filter(task=task)
+        points = StudentSubjectPoints.objects.filter(student=solution.student, task=task).first()
 
-        # points = solution.student.studentsubjectpoints_set.filter(task=task)
-        points = solution.student.studentsubjectpoints_set.filter(task=task).first()
-
-        context = {'task': task, 'solutions': solutions, 'solution': solution,
-                   'subject': task.subject, 'points': points}
+        context = {
+            'task': task,
+            'solutions': solutions,
+            'solution': solution,
+            'subject': task.subject,
+            'points': points
+        }
         return render(request, 'webeducation/view_solution.html', context)
 
 
@@ -309,8 +327,6 @@ class ViewTeachers(LoginRequiredMixin, View):
                 new_request.save()
                 messages.success(request, 'Request sent successfully.')
                 return redirect('check_account')
-        else:
-            messages.error(request, 'Teacher ID not provided.')
 
         return redirect('view_teachers', subject_name=subject_name)
 

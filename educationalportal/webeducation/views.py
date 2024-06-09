@@ -20,6 +20,7 @@ info = {
 }
 
 
+# ?
 class UploadPhotoView(View):
     def post(self, request):
         form = PhotoUploadForm(request.POST, request.FILES, instance=request.user)
@@ -79,6 +80,7 @@ class CheckMyPointsView(View):
         return render(request, 'webeducation/check_my_points.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class StudentsList(View):
     def get(self, request, subject_id):
         subject = Subject.objects.get(id=subject_id)
@@ -87,6 +89,7 @@ class StudentsList(View):
         return render(request, 'webeducation/view_students.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class TeacherProfileView(View):
     def get(self, request, teacher_id):
         teacher = get_object_or_404(Teacher, id=teacher_id)
@@ -94,6 +97,7 @@ class TeacherProfileView(View):
         return render(request, 'webeducation/teacher_profile.html', context)
 
 
+@method_decorator(login_required, name='dispatch')
 class StudentProfileView(View):
     def get(self, request, student_id):
         student = get_object_or_404(Student, id=student_id)
@@ -111,15 +115,12 @@ class IndexView(View):
         return render(request, 'webeducation/index.html', context)
 
 
-# try to create decorator to check for a student
 @method_decorator(login_required, name='dispatch')
 class TaskSolvingView(View):
     def get(self, request, subject_name, task_id):
         form = TaskSolutionForm()
         subject = get_object_or_404(Subject, name=subject_name)
         task = get_object_or_404(Task, id=task_id)
-
-        # Перевірка, чи вже була відправлена відповідь для цього завдання та студента
         solution_submitted = TaskSolution.objects.filter(student=request.user.student, task=task).exists()
 
         context = {'subject': subject, 'form': form, 'task': task, 'solution_submitted': solution_submitted}
@@ -148,6 +149,7 @@ class TaskSolvingView(View):
         return render(request, 'webeducation/task_solution.html', context)
 
 
+# login_required in url?
 class SubjectTasksView(View):
     def get(self, request, subject_id):
         subject = get_object_or_404(Subject, id=subject_id)
@@ -157,7 +159,6 @@ class SubjectTasksView(View):
 
         has_teacher = False
         if user.role == 'student':
-            # Перевірка наявності підтвердженого запиту у студента для викладача з даного предмета
             has_teacher = SubjectRequest.objects.filter(
                 student=user.student,
                 subject=subject,
@@ -167,12 +168,7 @@ class SubjectTasksView(View):
             if user.student.course:
                 tasks = tasks.filter(course_num=user.student.course)
 
-        context = {
-            'subject': subject,
-            'tasks': tasks,
-            'courses': courses,
-            'has_teacher': has_teacher,
-        }
+        context = {'subject': subject, 'tasks': tasks, 'courses': courses, 'has_teacher': has_teacher,}
         return render(request, 'webeducation/subject_tasks.html', context)
 
 
@@ -219,13 +215,8 @@ class CheckSolutionView(View):
         solutions = TaskSolution.objects.filter(task=task)
         points = StudentSubjectPoints.objects.filter(student=solution.student, task=task).first()
 
-        context = {
-            'task': task,
-            'solutions': solutions,
-            'solution': solution,
-            'subject': task.subject,
-            'points': points
-        }
+        context = {'task': task, 'solutions': solutions, 'solution': solution,
+                   'subject': task.subject, 'points': points}
         return render(request, 'webeducation/view_solution.html', context)
 
 
@@ -252,8 +243,9 @@ class GiveGradeView(View):
         subject = get_object_or_404(Subject, id=subject_id)
         task = get_object_or_404(Task, id=task_id)
         form = StudentSubjectPointsFrom(initial={'student': student, 'subject': subject, 'task': task})
-        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student,
-                                                                'subject': subject, 'task': task})
+
+        context = {'form': form, 'student': student, 'subject': subject, 'task': task}
+        return render(request, 'webeducation/give_grade.html', context)
 
     def post(self, request, student_id, subject_id, task_id):
         student = get_object_or_404(Student, id=student_id)
@@ -268,21 +260,9 @@ class GiveGradeView(View):
             instance.save()
             messages.success(request, 'You have successfully submitted a grade.')
             return redirect('check_account')
-        return render(request, 'webeducation/give_grade.html', {'form': form, 'student': student,
-                                                                'subject': subject, 'task': task})
 
-
-def get_subjects(request):
-    if request.user.is_authenticated:
-        user = request.user
-        if user.role == 'teacher':
-            subjects = user.teacher.subjects.all()
-        elif user.role == 'student':
-            subjects = user.student.subjects.all()
-
-        return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
-    else:
-        return render(request, 'webeducation/login.html')
+        context = {'form': form, 'student': student, 'subject': subject, 'task': task}
+        return render(request, 'webeducation/give_grade.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -297,9 +277,6 @@ class AddSubjectToUserView(View):
 
 @method_decorator(login_required, name='dispatch')
 class DeleteSubjectView(View):
-    def get(self, request):
-        return redirect('check_account')
-
     def post(self, request):
         user = request.user
         subject_id = request.POST.get('subject_id')
@@ -319,23 +296,18 @@ class FindTeacherView(View):
         user = request.user
         subjects_with_teacher = []
         if user.is_authenticated and user.role == 'student':
-
             subjects_with_teacher = SubjectRequest.objects.filter(
                 student=user.student
-            ).values_list('subject_id', flat=True)
+            ).values_list('subject_id', flat=True)  # values_list
 
-        context = {
-            'subjects_with_teacher': subjects_with_teacher,
-        }
+        context = {'subjects_with_teacher': subjects_with_teacher}
         return render(request, 'webeducation/find_teacher.html', context)
 
 
-@method_decorator(login_required, name='dispatch')
 class ViewTeachers(LoginRequiredMixin, View):
     def get(self, request, subject_name):
         subject = get_object_or_404(Subject, name=subject_name)
         student = request.user.student
-
         existing_request = SubjectRequest.objects.filter(student=student, subject=subject).exists()
 
         context = {'subject': subject, 'existing_request': existing_request}
@@ -349,11 +321,10 @@ class ViewTeachers(LoginRequiredMixin, View):
         if teacher_id is not None:
             teacher = get_object_or_404(Teacher, id=teacher_id)
 
-            # Перевірка наявності вже існуючого запиту
             if SubjectRequest.objects.filter(student=student, subject=subject).exists():
                 messages.error(request, 'You have already sent a request for this subject.')
+                return redirect('check_account')
             else:
-                # Створення нового запиту
                 new_request = SubjectRequest(student=student, subject=subject, teacher=teacher)
                 new_request.save()
                 messages.success(request, 'Request sent successfully.')
@@ -665,3 +636,16 @@ class CheckStudentAnswerView(View):
         student_answers = QuizAnswer.objects.filter(student_id=student_id, quiz_question__quiz_id=quiz_id)
         context = {'student_answers': student_answers}
         return render(request, 'webeducation/quiz_student_answer.html', context)
+
+
+# def get_subjects(request):
+#     if request.user.is_authenticated:
+#         user = request.user
+#         if user.role == 'teacher':
+#             subjects = user.teacher.subjects.all()
+#         elif user.role == 'student':
+#             subjects = user.student.subjects.all()
+#
+#         return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
+#     else:
+#         return render(request, 'webeducation/login.html')

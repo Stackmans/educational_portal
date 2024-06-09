@@ -602,16 +602,16 @@ class CourseQuizzesView(View):
         subject = Subject.objects.get(pk=subject_id)
         course = Course.objects.get(pk=course_id)
         quizzes = Quiz.objects.filter(course=course.id, subject=subject)
-        return render(request, 'webeducation/course_quizzes.html', {'quizzes': quizzes,
-                                                                    'subject': subject,
-                                                                    'course': course})
+
+        context = {'quizzes': quizzes, 'subject': subject, 'course': course}
+        return render(request, 'webeducation/course_quizzes.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
 class QuizResultsView(View):
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
-        quiz_answers = QuizAnswer.objects.filter(quiz_question__quiz=quiz).select_related('student')
+        quiz_answers = QuizAnswer.objects.filter(quiz_question__quiz=quiz).select_related('student')  # ?
 
         students = set()
         student_answers = {}

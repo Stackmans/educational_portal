@@ -633,16 +633,3 @@ class CheckStudentAnswerView(View):
         student_answers = QuizAnswer.objects.filter(student_id=student_id, quiz_question__quiz_id=quiz_id)
         context = {'student_answers': student_answers}
         return render(request, 'webeducation/quiz_student_answer.html', context)
-
-
-def get_subjects(request):
-    if request.user.is_authenticated:
-        user = request.user
-        if user.role == 'teacher':
-            subjects = user.teacher.subjects.all()
-        elif user.role == 'student':
-            subjects = user.student.subjects.all()
-
-        return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
-    else:
-        return render(request, 'webeducation/login.html')

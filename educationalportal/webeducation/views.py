@@ -400,10 +400,8 @@ class RegisterView(View):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
 
-            # Збереження користувача в БД
             user = CustomUser.objects.create_user(username=username, role=role, first_name=first_name,
                                                   last_name=last_name, email=email, password=password)
-
             if role == 'teacher':
                 Teacher.objects.create(user=user)
             elif role == 'student':
@@ -411,7 +409,7 @@ class RegisterView(View):
 
             login(request, user)
 
-            messages.success(request, 'Ви успішно зареєструвалися!')
+            messages.success(request, 'successfully registered')
             return redirect('check_account')
         else:
             return render(request, 'webeducation/register.html', {'form': form})
@@ -467,12 +465,13 @@ class CreateQuizView(View):
 
             questions = []
             for key, value in request.POST.items():
+                print('key:', key)
+                print('value', value)
                 if key.startswith('question_'):
                     question_text = value
                     question = QuizQuestion.objects.create(quiz=quiz, question_text=question_text)
                     questions.append(question)
 
-                    # Отримання варіантів відповідей та текстів окремо
                     options = {
                         'A': request.POST.get(f'optionA_{key.split("_")[1]}'),
                         'B': request.POST.get(f'optionB_{key.split("_")[1]}'),
@@ -487,7 +486,6 @@ class CreateQuizView(View):
                     }
 
                     for option_text, is_correct in options.items():
-                        # Використання відповідного тексту для кожного варіанту
                         text = texts[option_text]
                         is_correct = True if option_text == request.POST.get(f'correct_option_{key.split("_")[1]}')else False
                         QuizOption.objects.create(question=question, option_text=option_text,
@@ -521,9 +519,8 @@ class SolveQuizView(View):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
         subject = get_object_or_404(Subject, pk=subject_id)
 
-        # Встановлюємо quiz_end_time у сесії, якщо він ще не встановлений
         if 'quiz_end_time' not in request.session:
-            quiz_duration = quiz.time_limit  # Припускаючи, що quiz.time_limit вказаний в секундах
+            quiz_duration = quiz.time_limit
             end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
@@ -638,14 +635,14 @@ class CheckStudentAnswerView(View):
         return render(request, 'webeducation/quiz_student_answer.html', context)
 
 
-# def get_subjects(request):
-#     if request.user.is_authenticated:
-#         user = request.user
-#         if user.role == 'teacher':
-#             subjects = user.teacher.subjects.all()
-#         elif user.role == 'student':
-#             subjects = user.student.subjects.all()
-#
-#         return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
-#     else:
-#         return render(request, 'webeducation/login.html')
+def get_subjects(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if user.role == 'teacher':
+            subjects = user.teacher.subjects.all()
+        elif user.role == 'student':
+            subjects = user.student.subjects.all()
+
+        return render(request, 'webeducation/user_subjects.html', {'subjects': subjects})
+    else:
+        return render(request, 'webeducation/login.html')

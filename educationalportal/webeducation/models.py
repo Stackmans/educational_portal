@@ -39,10 +39,6 @@ class CustomUser(AbstractUser):
         return self.username
 
 
-class UploadsModel(models.Model):
-    file = models.FileField(upload_to='uploads_model')
-
-
 class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='teacher', null=True, blank=True)
     subjects = models.ManyToManyField(Subject)

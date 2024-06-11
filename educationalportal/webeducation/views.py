@@ -14,13 +14,12 @@ from .models import CustomUser, Teacher, Student, Subject, Course, SubjectReques
     QuizQuestion, QuizOption, QuizAnswer, StudentSubjectPoints
 from .utils import add_subject, save_quiz_answers
 
-#  !!????
 info = {
     'title': 'Enlighten me'
 }
 
 
-# ?
+@method_decorator(login_required, name='dispatch')
 class UploadPhotoView(View):
     def post(self, request):
         form = PhotoUploadForm(request.POST, request.FILES, instance=request.user)
@@ -149,7 +148,7 @@ class TaskSolvingView(View):
         return render(request, 'webeducation/task_solution.html', context)
 
 
-# login_required in url?
+@method_decorator(login_required, name='dispatch')
 class SubjectTasksView(View):
     def get(self, request, subject_id):
         subject = get_object_or_404(Subject, id=subject_id)
@@ -465,8 +464,6 @@ class CreateQuizView(View):
 
             questions = []
             for key, value in request.POST.items():
-                print('key:', key)
-                print('value', value)
                 if key.startswith('question_'):
                     question_text = value
                     question = QuizQuestion.objects.create(quiz=quiz, question_text=question_text)
@@ -517,21 +514,17 @@ class QuizSubmissionView(View):
 class SolveQuizView(View):
     def get(self, request, quiz_id, subject_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
-        subject = get_object_or_404(Subject, pk=subject_id)
 
         if 'quiz_end_time' not in request.session:
             quiz_duration = quiz.time_limit
-            end_time = timezone.now() + timezone.timedelta(seconds=quiz_duration)
+            end_time = timezone.now() + timezone.timedelta(minutes=quiz_duration)
             request.session['quiz_end_time'] = end_time.timestamp()
 
-        context = {'quiz': quiz, 'subject': subject,
+        context = {'quiz': quiz, 'subject': quiz.subject,
                    'time_left': request.session['quiz_end_time'] - timezone.now().timestamp()}
         return render(request, 'webeducation/test.html', context)
 
     def post(self, request, quiz_id, subject_id):
-        quiz = get_object_or_404(Quiz, pk=quiz_id)
-        subject = get_object_or_404(Subject, pk=subject_id)
-
         if 'quiz_end_time' in request.session:
             time_left = max(0, request.session['quiz_end_time'] - timezone.now().timestamp())
 
@@ -540,7 +533,7 @@ class SolveQuizView(View):
                 messages.success(request, 'Your test saved automatically')
             else:
                 messages.success(request, 'Your test saved successfully')
-            del request.session['quiz_end_time']  # ?
+            del request.session['quiz_end_time']
             return redirect('check_account')
         else:
             save_quiz_answers(request, quiz_id)
@@ -558,7 +551,6 @@ class ViewQuiz(View):
         return render(request, 'webeducation/view_quiz.html', context)
 
 
-#  get_quizzes_for_user  ???!!!!!!!!!!!
 @method_decorator(login_required, name='dispatch')
 class QuizzesView(View):
     def get(self, request):

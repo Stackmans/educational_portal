@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Sum  # wtf
+from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -130,7 +130,6 @@ class TaskSolvingView(View):
         subject = get_object_or_404(Subject, name=subject_name)
         task = get_object_or_404(Task, id=task_id)
 
-        # Перевірка, чи вже була відправлена відповідь для цього завдання та студента
         solution_submitted = TaskSolution.objects.filter(student=request.user.student, task=task).exists()
 
         context = {'subject': subject, 'form': form, 'task': task, 'solution_submitted': solution_submitted}
@@ -193,20 +192,6 @@ class SolutionsView(View):
 
 @method_decorator(login_required, name='dispatch')
 class CheckSolutionView(View):
-    # def get(self, request, task_id, solution_id):
-    #     solution = get_object_or_404(TaskSolution, id=solution_id)
-    #     task = get_object_or_404(Task, id=task_id)
-    #     solutions = TaskSolution.objects.filter(task=task)
-    #     points = StudentSubjectPoints.objects.filter(student=solution.student, task=task).first()
-    #
-    #     context = {
-    #         'task': task,
-    #         'solutions': solutions,
-    #         'solution': solution,
-    #         'subject': task.subject,
-    #         'points': points
-    #     }
-    #     return render(request, 'webeducation/view_solution.html', context)
     def post(self, request, task_id, solution_id):
 
         solution = get_object_or_404(TaskSolution, id=solution_id)
@@ -297,7 +282,7 @@ class FindTeacherView(View):
         if user.is_authenticated and user.role == 'student':
             subjects_with_teacher = SubjectRequest.objects.filter(
                 student=user.student
-            ).values_list('subject_id', flat=True)  # values_list
+            ).values_list('subject_id', flat=True)
 
         context = {'subjects_with_teacher': subjects_with_teacher}
         return render(request, 'webeducation/find_teacher.html', context)
@@ -353,14 +338,14 @@ class RequestsView(View):
         return render(request, 'webeducation/requests_to_teacher.html', {'requests': requests})
 
 
-def confirm_request(request, request_id):  # utils?
+def confirm_request(request, request_id):
     subject_request = get_object_or_404(SubjectRequest, pk=request_id)
     subject_request.is_confirmed = True
     subject_request.save()
     return redirect('requests')
 
 
-def reject_request(request, request_id):  # utils?
+def reject_request(request, request_id):
     subject_request = get_object_or_404(SubjectRequest, pk=request_id)
     subject_request.delete()
     return redirect('requests')
@@ -437,7 +422,7 @@ class LoginView(View):
 class DeleteAccount(View):
     def get(self, request):
         form = DeleteAccountForm()
-        return render(request, 'webeducation/account_info.html', {'form': form,})
+        return render(request, 'webeducation/account_info.html', {'form': form})
 
     def post(self, request):
         form = DeleteAccountForm(request.POST)
@@ -454,7 +439,6 @@ class CreateQuizView(View):
         form = QuizForm()
         return render(request, 'webeducation/create_test.html', {'form': form})
 
-    #  !!!???
     def post(self, request):
         form = QuizForm(request.POST)
         if form.is_valid():
@@ -505,7 +489,6 @@ class QuizSubmissionView(View):
                 if selected_option.is_correct:
                     score += 1
 
-        # Save the score or show it in some way
         messages.success(request, f'Your score: {score}/{quiz.questions.count()}')
         return redirect('check_account')
 
@@ -603,7 +586,7 @@ class CourseQuizzesView(View):
 class QuizResultsView(View):
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, pk=quiz_id)
-        quiz_answers = QuizAnswer.objects.filter(quiz_question__quiz=quiz).select_related('student')  # ?
+        quiz_answers = QuizAnswer.objects.filter(quiz_question__quiz=quiz).select_related('student')
 
         students = set()
         student_answers = {}

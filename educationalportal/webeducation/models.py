@@ -53,7 +53,6 @@ class Student(models.Model):
         return self.user.username
 
 
-# mb add new table with confirmed requests
 class SubjectRequest(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_requests')
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_requests')

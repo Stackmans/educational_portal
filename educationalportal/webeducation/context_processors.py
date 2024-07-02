@@ -13,7 +13,6 @@ def unconfirmed_requests(request):
     return {'has_unconfirmed_requests': has_unconfirmed_requests}
 
 
-# hasattr?
 def check_student_quizzes(request):
     if request.user.is_authenticated and hasattr(request.user, 'student') and hasattr(request.user.student, 'course'):
         student_course = get_object_or_404(Course, id=request.user.student.course.id)

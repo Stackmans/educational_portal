@@ -14,14 +14,6 @@ class PhotoUploadForm(forms.ModelForm):
         fields = ['photo']
 
 
-# class RegisterUserForm(UserCreationForm):
-#     role = forms.ChoiceField(choices=[('student', 'Student'), ('teacher', 'Teacher')])
-#
-#     class Meta:
-#         model = CustomUser
-#         fields = ('username', 'role', 'first_name', 'last_name', 'email', 'password1', 'password2')
-
-
 class RegisterUserForm(UserCreationForm):
     class Meta:
         model = CustomUser
@@ -42,7 +34,7 @@ class SubjectDisplayForm(forms.Form):
 class StudentCourseForm(forms.Form):
     course = forms.ModelChoiceField(
         queryset=Course.objects.all(),
-        empty_label=None,  # Прибрати пустий варіант
+        empty_label=None,
         label='Choose a course',
     )
 

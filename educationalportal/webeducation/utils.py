@@ -28,11 +28,9 @@ def save_quiz_answers(request, quiz_id):
             if chosen_option_id:
                 chosen_option = get_object_or_404(QuizOption, pk=chosen_option_id)
             else:
-                chosen_option = None  # або можна просто пропустити збереження, якщо нічого не обрано
+                chosen_option = None
             QuizAnswer.objects.update_or_create(
                 student=request.user.student,
                 quiz_question=question,
                 defaults={'chosen_option': chosen_option}
             )
-
-
